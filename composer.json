@@ -1,0 +1,48 @@
+{
+    "name": "whitecube/laravel-links",
+    "description": "Store & resolve internal URLs without having to worry about route, slug or domain changes",
+    "keywords": [
+        "whitecube",
+        "laravel",
+        "url",
+        "link",
+        "blade"
+    ],
+    "authors": [
+        {
+            "name": "Whitecube",
+            "email": "hello@whitecube.be"
+        },
+        {
+            "name": "Toon Van den Bos",
+            "email": "toon@whitecube.be"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "laravel/framework": "^10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Whitecube\\Links\\": "src/",
+            "Whitecube\\Links\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Whitecube\\Links\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "pestphp/pest": "^2.30"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": false
+        }
+    }
+}
