@@ -25,3 +25,21 @@ it('cannot find an undefined resolver instance and return null', function () {
 
    expect($service->tryFor('foo'))->toBeNull();
 });
+
+it('can register macros', function () {
+   Manager::macro('foo', function(string $name) {
+      $resolver = new class ($name) implements ResolverInterface {
+            public function __construct(public string $name) {}
+      };
+      $this->register('test.'.$name, $resolver);
+      return $resolver;
+   });
+
+   $service = new Manager();
+   $service->foo('bar');
+
+   $resolver = $service->for('test.bar');
+
+   expect($resolver)->toBeInstanceOf(ResolverInterface::class);
+   expect($resolver->name)->toBe('bar');
+});

@@ -2,10 +2,13 @@
 
 namespace Whitecube\Links;
 
+use Illuminate\Support\Traits\Macroable;
 use Whitecube\Links\Exceptions\ResolverNotFound;
 
 class Manager
 {
+    use Macroable;
+    
     /**
      * The registered URL resolvers.
      */
