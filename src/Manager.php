@@ -27,9 +27,10 @@ class Manager
      */
     public function route(string $name, array $arguments = []): ResolverInterface
     {
-        $resolver = (new RouteResolver())->route($name, $arguments);
+        $key = 'route.'.$name;
+        $resolver = (new RouteResolver($key))->route($name, $arguments);
 
-        $this->register('route.'.$name, $resolver);
+        $this->register($key, $resolver);
 
         return $resolver;
     }
@@ -62,5 +63,13 @@ class Manager
     public function tryFor(string $key): ?ResolverInterface
     {
         return $this->repository->get($key);
+    }
+
+    /**
+     * Return all the available Links.
+     */
+    public function options(): LinksCollectionBuilder
+    {
+        return new LinksCollectionBuilder($this->repository);
     }
 }

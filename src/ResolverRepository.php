@@ -24,4 +24,12 @@ class ResolverRepository
     {
         return $this->items[$key] ?? null;
     }
+
+    /**
+     * Return all registered URL resolver.
+     */
+    public function all(): array
+    {
+        return $this->items;
+    }
 }
