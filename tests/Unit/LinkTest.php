@@ -18,6 +18,20 @@ it('can serialize to array', function () {
     ]);
 });
 
+it('can serialize to without ID when undefined', function () {
+    $link = new Link('foo');
+    $link->title('This is a testing title');
+    $link->arguments(['value' => 'something', 'removed' => null]);
+
+    $result = $link->toArray();
+
+    expect($result)->toBeArray();
+    expect($result)->toMatchArray([
+        'key' => 'foo',
+        'value' => 'something'
+    ]);
+});
+
 it('can serialize to inline tag', function () {
     $link = new Link('foo','bar');
     $link->title('This is a testing title');
