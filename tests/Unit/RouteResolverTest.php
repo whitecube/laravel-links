@@ -14,7 +14,7 @@ it('can register named route', function () {
    expect($resolver->getRouteArguments())->toBeArray();
    expect($resolver->getRouteArguments())->toHaveCount(0);
 
-   expect($service->for('route.foo'))->toBe($resolver);
+   expect($service->for('foo'))->toBe($resolver);
 });
 
 it('can register named route with arguments', function () {
@@ -30,7 +30,7 @@ it('can register named route with arguments', function () {
    expect($resolver->getRouteArguments())->toHaveCount(1);
    expect($resolver->getRouteArgument('bar'))->toBe('test');
 
-   expect($service->for('route.foo'))->toBe($resolver);
+   expect($service->for('foo'))->toBe($resolver);
 });
 
 it('can resolve simple defined route', function () {
@@ -39,7 +39,7 @@ it('can resolve simple defined route', function () {
       ->with('foo', [])
       ->andReturn('https://foo.bar/testing-route');
 
-   $resolver = (new RouteResolver)->route('foo');
+   $resolver = (new RouteResolver('some-key'))->route('foo');
 
    expect($resolver->resolve())->toBe('https://foo.bar/testing-route');
 });
@@ -50,7 +50,7 @@ it('can resolve defined route with arguments', function () {
       ->with('foo', ['bar' => 'test', 'foo' => 'bar'])
       ->andReturn('https://foo.bar/testing-route');
 
-   $resolver = (new RouteResolver)->route('foo', ['bar' => 'overwritten', 'foo' => 'bar']);
+   $resolver = (new RouteResolver('some-key'))->route('foo', ['bar' => 'overwritten', 'foo' => 'bar']);
 
    expect($resolver->resolve(['bar' => 'test']))->toBe('https://foo.bar/testing-route');
 });

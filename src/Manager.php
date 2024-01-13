@@ -27,10 +27,9 @@ class Manager
      */
     public function route(string $name, array $arguments = []): ResolverInterface
     {
-        $key = 'route.'.$name;
-        $resolver = (new RouteResolver($key))->route($name, $arguments);
+        $resolver = (new RouteResolver($name))->route($name, $arguments);
 
-        $this->register($key, $resolver);
+        $this->register($name, $resolver);
 
         return $resolver;
     }

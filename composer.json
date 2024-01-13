@@ -38,8 +38,8 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-        "pestphp/pest": "^2.30",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "pestphp/pest": "^2.31"
     },
     "config": {
         "allow-plugins": {

@@ -18,7 +18,7 @@ it('can serialize to array', function () {
     ]);
 });
 
-it('can serialize to without ID when undefined', function () {
+it('can serialize to array without ID when undefined', function () {
     $link = new Link('foo');
     $link->title('This is a testing title');
     $link->arguments(['value' => 'something', 'removed' => null]);
