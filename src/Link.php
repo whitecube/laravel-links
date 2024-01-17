@@ -2,6 +2,8 @@
 
 namespace Whitecube\Links;
 
+use Whitecube\Links\Exceptions\InvalidSerializedValue;
+
 class Link
 {
     /**
@@ -34,6 +36,44 @@ class Link
     }
 
     /**
+     * Create a link instance from serialized array.
+     */
+    public static function fromArray(array $value): static
+    {
+        if(! isset($value['key'])) {
+            return InvalidSerializedValue::forArray();
+        }
+
+        $instance = new static($value['key'], $value['id'] ?? null);
+
+        unset($value['key']);
+        unset($value['id']);
+
+        return $instance->arguments($value);
+    }
+
+    /**
+     * Create a link instance from an inline tag (string).
+     */
+    public static function fromInlineTag(string $value): static
+    {
+        preg_match('/^\\@link\\((.+?)\\)$/', trim($value), $matches);
+
+        if(! ($matches[1] ?? null)) {
+            return InvalidSerializedValue::forInlineTag($value);
+        }
+
+        $data = array_reduce(explode(',', $matches[1]), function ($data, $pair) {
+            $pair = explode(':', $pair);
+            if(! isset($pair[0]) || ! isset($pair[1])) return $data;
+            $data[$pair[0]] = $pair[1];
+            return $data;
+        }, []);
+
+        return static::fromArray($data);
+    }
+
+    /**
      * Define the link's default displayable title.
      */
     public function title(string $title): static
@@ -41,6 +81,14 @@ class Link
         $this->title = $title;
 
         return $this;
+    }
+
+    /**
+     * Get the link's displayable title.
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
     }
 
     /**
@@ -62,7 +110,7 @@ class Link
      */
     public function argument(string $attribute, mixed $value): static
     {
-        $this->arguments[$attribute] = strval($value);
+        $this->arguments[$attribute] = is_null($value) ? null : strval($value);
 
         return $this;
     }
