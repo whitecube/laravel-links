@@ -37,6 +37,23 @@ class LinksCollectionBuilder
     }
 
     /**
+     * Keep one or more resolvers from the collection
+     */
+    public function only(string|array $keys): static
+    {
+        if (is_string($keys)) {
+            $keys = [$keys];
+        }
+
+        foreach($this->resolvers as $key => $resolver) {
+            if(in_array($key, $keys)) continue;
+            unset($this->resolvers[$key]);
+        }
+
+        return $this;
+    }
+
+    /**
      * Transform the selected resolvers into an array of concrete Links.
      */
     public function toArray(): array

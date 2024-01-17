@@ -44,3 +44,51 @@ it('can register macros', function () {
    expect($resolver)->toBeInstanceOf(ResolverInterface::class);
    expect($resolver->name)->toBe('bar');
 });
+
+it('can return concrete links list', function () {
+   $service = new Manager();
+   $service->route('home')->title('Homepage');
+   $service->route('foo')->title(fn() => date('c'));
+   $service->route('bar');
+
+   $links = $service->links()->all();
+   expect($links)->toHaveCount(3);
+   expect($links[0]->getResolverKey())->toBe('home');
+   expect($links[0]->getTitle())->toBe('Homepage');
+   expect($links[1]->getResolverKey())->toBe('foo');
+   expect($links[1]->getTitle())->toBe(date('c'));
+   expect($links[2]->getResolverKey())->toBe('bar');
+   expect($links[2]->getTitle())->toBe('bar');
+});
+
+it('can return concrete links list without unwanted resolvers', function () {
+   $service = new Manager();
+   $service->route('home')->title('Homepage');
+   $service->route('foo')->title(fn() => date('c'));
+   $service->route('bar');
+
+   $withoutHome = $service->links()->except('home')->all();
+   expect($withoutHome)->toHaveCount(2);
+   expect($withoutHome[0]->getResolverKey())->toBe('foo');
+   expect($withoutHome[1]->getResolverKey())->toBe('bar');
+
+   $withoutFooBar = $service->links()->except(['foo','bar'])->all();
+   expect($withoutFooBar)->toHaveCount(1);
+   expect($withoutFooBar[0]->getResolverKey())->toBe('home');
+});
+
+it('can return concrete links list of selected resolvers ', function () {
+   $service = new Manager();
+   $service->route('home')->title('Homepage');
+   $service->route('foo')->title(fn() => date('c'));
+   $service->route('bar');
+
+   $onlyHome = $service->links()->only('home')->all();
+   expect($onlyHome)->toHaveCount(1);
+   expect($onlyHome[0]->getResolverKey())->toBe('home');
+
+   $onlyFooBar = $service->links()->only(['foo','bar'])->all();
+   expect($onlyFooBar)->toHaveCount(2);
+   expect($onlyFooBar[0]->getResolverKey())->toBe('foo');
+   expect($onlyFooBar[1]->getResolverKey())->toBe('bar');
+});

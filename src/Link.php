@@ -36,6 +36,14 @@ class Link
     }
 
     /**
+     * Create a new Link instance dynamically.
+     */
+    public static function make(string $key, null|int|string $id = null): static
+    {
+        return new static($key, $id);
+    }
+
+    /**
      * Create a link instance from serialized array.
      */
     public static function fromArray(array $value): static
@@ -44,7 +52,7 @@ class Link
             return InvalidSerializedValue::forArray();
         }
 
-        $instance = new static($value['key'], $value['id'] ?? null);
+        $instance = static::make($value['key'], $value['id'] ?? null);
 
         unset($value['key']);
         unset($value['id']);
@@ -71,6 +79,14 @@ class Link
         }, []);
 
         return static::fromArray($data);
+    }
+
+    /**
+     * Get the link's resolver identifying key
+     */
+    public function getResolverKey(): string
+    {
+        return $this->key;
     }
 
     /**

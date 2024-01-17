@@ -5,6 +5,7 @@ namespace Whitecube\Links;
 class RouteResolver implements ResolverInterface
 {
     use Concerns\ResolvesRoutes;
+    use Concerns\HasOptionsTitle;
 
     /**
      * The resolver's identification key.
@@ -25,7 +26,9 @@ class RouteResolver implements ResolverInterface
     public function toLinks(): array
     {
         return [
-            Link::make($this->key)->arguments($this->getRouteArguments())
+            Link::make($this->key)
+                ->arguments($this->getRouteArguments())
+                ->title($this->getTitle()),
         ];
     }
 }

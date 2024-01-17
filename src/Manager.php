@@ -67,7 +67,7 @@ class Manager
     /**
      * Return all the available Links.
      */
-    public function options(): LinksCollectionBuilder
+    public function links(): LinksCollectionBuilder
     {
         return new LinksCollectionBuilder($this->repository);
     }
