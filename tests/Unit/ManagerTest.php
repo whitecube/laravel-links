@@ -30,6 +30,7 @@ it('can register macros', function () {
    Manager::macro('foo', function(string $name) {
       $resolver = new class ($name) implements ResolverInterface {
             public function __construct(public string $name) {}
+            public function toLinks(): array { return []; }
       };
       $this->register('test.'.$name, $resolver);
       return $resolver;

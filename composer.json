@@ -1,18 +1,20 @@
 {
     "name": "whitecube/laravel-links",
     "description": "Store & resolve internal URLs without having to worry about route, slug or domain changes",
-    "keywords": [
-        "whitecube",
-        "laravel",
-        "url",
-        "link",
-        "blade"
-    ],
+    "keywords": ["whitecube","laravel","url","link","blade"],
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Whitecube\\Links\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Whitecube\\Links\\Tests\\Fixtures\\": "tests/Fixtures"
+        }
+    },
     "authors": [
-        {
-            "name": "Whitecube",
-            "email": "hello@whitecube.be"
-        },
         {
             "name": "Toon Van den Bos",
             "email": "toon@whitecube.be"
@@ -20,13 +22,11 @@
     ],
     "require": {
         "php": ">=8.1",
-        "laravel/framework": "^10"
+        "laravel/framework": "^10.40"
     },
-    "autoload": {
-        "psr-4": {
-            "Whitecube\\Links\\": "src/",
-            "Whitecube\\Links\\Tests\\": "tests/"
-        }
+    "require-dev": {
+        "pestphp/pest": "^2.31",
+        "mockery/mockery": "^1.6"
     },
     "extra": {
         "laravel": {
@@ -35,15 +35,9 @@
             ]
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require-dev": {
-        "mockery/mockery": "^1.6",
-        "pestphp/pest": "^2.31"
-    },
     "config": {
         "allow-plugins": {
-            "pestphp/pest-plugin": false
+            "pestphp/pest-plugin": true
         }
     }
 }
