@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\App;
+use Whitecube\Links\Option;
+use Whitecube\Links\OptionInterface;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -39,7 +43,14 @@
 |
 */
 
-// function something()
-// {
-//     // ..
-// }
+function setupAppBindings()
+{
+    App::swap(new class() {
+        public function makeWith(string $classname, array $arguments = []) {
+            return match ($classname) {
+                OptionInterface::class => new Option(...$arguments),
+                default => null,
+            };
+        }
+    });
+}

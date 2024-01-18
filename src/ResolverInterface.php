@@ -5,7 +5,7 @@ namespace Whitecube\Links;
 interface ResolverInterface
 {
     /**
-     * Transform the resolver into an array of concrete Links.
+     * Transform the resolver into an available Link Option.
      */
-    public function toLinks(): array;
+    public function toOption(): ?OptionInterface;
 }

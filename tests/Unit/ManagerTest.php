@@ -1,6 +1,7 @@
 <?php
 
 use Whitecube\Links\Manager;
+use Whitecube\Links\OptionInterface;
 use Whitecube\Links\ResolverInterface;
 use Whitecube\Links\Exceptions\ResolverNotFound;
 use Whitecube\Links\Tests\Fixtures\FakeResolver;
@@ -30,7 +31,7 @@ it('can register macros', function () {
    Manager::macro('foo', function(string $name) {
       $resolver = new class ($name) implements ResolverInterface {
             public function __construct(public string $name) {}
-            public function toLinks(): array { return []; }
+            public function toOption(): ?OptionInterface { return null; }
       };
       $this->register('test.'.$name, $resolver);
       return $resolver;
@@ -45,49 +46,58 @@ it('can register macros', function () {
    expect($resolver->name)->toBe('bar');
 });
 
-it('can return concrete links list', function () {
+it('can return link options list', function () {
+   setupAppBindings();
+
    $service = new Manager();
    $service->route('home')->title('Homepage');
    $service->route('foo')->title(fn() => date('c'));
    $service->route('bar');
 
-   $links = $service->links()->all();
-   expect($links)->toHaveCount(3);
-   expect($links[0]->getResolverKey())->toBe('home');
-   expect($links[0]->getTitle())->toBe('Homepage');
-   expect($links[1]->getResolverKey())->toBe('foo');
-   expect($links[1]->getTitle())->toBe(date('c'));
-   expect($links[2]->getResolverKey())->toBe('bar');
-   expect($links[2]->getTitle())->toBe('bar');
+   $options = $service->options()->all();
+   expect($options)->toHaveCount(3);
+   expect($options[0])->toBeInstanceOf(OptionInterface::class);
+   expect($options[0]->getResolverKey())->toBe('home');
+   expect($options[0]->getTitle())->toBe('Homepage');
+   expect($options[1])->toBeInstanceOf(OptionInterface::class);
+   expect($options[1]->getResolverKey())->toBe('foo');
+   expect($options[1]->getTitle())->toBe(date('c'));
+   expect($options[2])->toBeInstanceOf(OptionInterface::class);
+   expect($options[2]->getResolverKey())->toBe('bar');
+   expect($options[2]->getTitle())->toBe('bar');
 });
 
-it('can return concrete links list without unwanted resolvers', function () {
+it('can return link options list without unwanted resolvers', function () {
+   setupAppBindings();
+
    $service = new Manager();
    $service->route('home')->title('Homepage');
    $service->route('foo')->title(fn() => date('c'));
    $service->route('bar');
 
-   $withoutHome = $service->links()->except('home')->all();
+   $withoutHome = $service->options()->except('home')->all();
    expect($withoutHome)->toHaveCount(2);
    expect($withoutHome[0]->getResolverKey())->toBe('foo');
    expect($withoutHome[1]->getResolverKey())->toBe('bar');
 
-   $withoutFooBar = $service->links()->except(['foo','bar'])->all();
+   $withoutFooBar = $service->options()->except(['foo','bar'])->all();
    expect($withoutFooBar)->toHaveCount(1);
    expect($withoutFooBar[0]->getResolverKey())->toBe('home');
 });
 
-it('can return concrete links list of selected resolvers ', function () {
+it('can return link options list of selected resolvers', function () {
+   setupAppBindings();
+
    $service = new Manager();
    $service->route('home')->title('Homepage');
    $service->route('foo')->title(fn() => date('c'));
    $service->route('bar');
 
-   $onlyHome = $service->links()->only('home')->all();
+   $onlyHome = $service->options()->only('home')->all();
    expect($onlyHome)->toHaveCount(1);
    expect($onlyHome[0]->getResolverKey())->toBe('home');
 
-   $onlyFooBar = $service->links()->only(['foo','bar'])->all();
+   $onlyFooBar = $service->options()->only(['foo','bar'])->all();
    expect($onlyFooBar)->toHaveCount(2);
    expect($onlyFooBar[0]->getResolverKey())->toBe('foo');
    expect($onlyFooBar[1]->getResolverKey())->toBe('bar');

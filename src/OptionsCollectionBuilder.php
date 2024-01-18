@@ -4,7 +4,7 @@ namespace Whitecube\Links;
 
 use Illuminate\Support\Collection;
 
-class LinksCollectionBuilder
+class OptionsCollectionBuilder
 {
     /**
      * The URL resolvers that will be transformed into Links.
@@ -14,13 +14,13 @@ class LinksCollectionBuilder
     /**
      * Create a new collection builder.
      */
-    public function __construct(ResolverRepository $repository)
+    public function __construct(array $resolvers)
     {
-        $this->resolvers = $repository->all();
+        $this->resolvers = $resolvers;
     }
 
     /**
-     * Remove one or more resolvers from the collection
+     * Return a new collection builder without the requested resolvers.
      */
     public function except(string|array $keys): static
     {
@@ -28,16 +28,18 @@ class LinksCollectionBuilder
             $keys = [$keys];
         }
 
-        foreach($keys as $key) {
-            if (! isset($this->resolvers[$key])) continue;
-            unset($this->resolvers[$key]);
+        $keep = [];
+
+        foreach($this->resolvers as $key => $resolver) {
+            if(in_array($key, $keys)) continue;
+            $keep[$key] = $resolver;
         }
 
-        return $this;
+        return new static($keep);
     }
 
     /**
-     * Keep one or more resolvers from the collection
+     * Return a new collection builder with the requested resolvers.
      */
     public function only(string|array $keys): static
     {
@@ -45,12 +47,14 @@ class LinksCollectionBuilder
             $keys = [$keys];
         }
 
+        $keep = [];
+
         foreach($this->resolvers as $key => $resolver) {
-            if(in_array($key, $keys)) continue;
-            unset($this->resolvers[$key]);
+            if(! in_array($key, $keys)) continue;
+            $keep[$key] = $resolver;
         }
 
-        return $this;
+        return new static($keep);
     }
 
     /**
@@ -58,11 +62,10 @@ class LinksCollectionBuilder
      */
     public function toArray(): array
     {
-        return array_reduce(
-            $this->resolvers,
-            fn($links, $resolver) => array_merge($links, array_values($resolver->toLinks())),
-            []
-        );
+        return array_values(array_filter(
+            array_map(fn($resolver) => $resolver->toOption(), $this->resolvers),
+            fn(?OptionInterface $option) => ($option && $option->isAvailable())
+        ));
     }
 
     /**

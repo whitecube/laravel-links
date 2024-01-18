@@ -3,8 +3,10 @@
 namespace Whitecube\Links\Concerns;
 
 use Closure;
+use Illuminate\Support\Facades\App;
+use Whitecube\Links\OptionInterface;
 
-trait HasOptionsTitle
+trait HasOption
 {
     /**
      * The resolver's displayable option title.
@@ -35,5 +37,13 @@ trait HasOptionsTitle
         }
 
         return $this->title;
+    }
+
+    /**
+     * Create a new empty option instance for this resolver.
+     */
+    protected function getOptionInstance(): OptionInterface
+    {
+        return App::makeWith(OptionInterface::class, ['resolver' => $this->key]);
     }
 }
