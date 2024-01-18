@@ -63,8 +63,7 @@ class OptionsCollectionBuilder
     public function toArray(): array
     {
         return array_values(array_filter(
-            array_map(fn($resolver) => $resolver->toOption(), $this->resolvers),
-            fn(?OptionInterface $option) => ($option && $option->isAvailable())
+            array_map(fn($resolver) => $resolver->toOption(), $this->resolvers)
         ));
     }
 

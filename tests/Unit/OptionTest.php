@@ -73,7 +73,6 @@ it('can define and return sub-options', function () {
         public function children(array $options): static { return $this; }
         public function hasChildren(): bool { return false; }
         public function getChildren(): array { return []; }
-        public function isAvailable(): bool { return true; }
     };
     $child3 = new class() {};
 

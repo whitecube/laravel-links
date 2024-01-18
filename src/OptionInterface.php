@@ -55,9 +55,4 @@ interface OptionInterface
      * Return the eventual sub-options.
      */
     public function getChildren(): array;
-
-    /**
-     * Check if this option should be considered as "usable".
-     */
-    public function isAvailable(): bool;
 }

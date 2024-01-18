@@ -145,13 +145,4 @@ class Option implements OptionInterface
     {
         return $this->children;
     }
-
-    /**
-     * Check if this option should be considered as "usable".
-     */
-    public function isAvailable(): bool
-    {
-        // TODO : maybe compute this.
-        return true;
-    }
 }
