@@ -1,6 +1,6 @@
 <?php
 
-namespace Whitecube\Links\Concerns;
+namespace Whitecube\Links\Resolvers\Concerns;
 
 use Illuminate\Support\Facades\URL;
 
@@ -12,12 +12,12 @@ trait ResolvesRoutes
     protected string $routeName;
 
     /**
-     * The route's variables for this URL.
+     * The route parameters for this URL.
      */
     protected array $routeArguments = [];
 
     /**
-     * Set the URL resolver's route name.
+     * Set the URL resolver's route name and static parameters.
      */
     public function route(string $name, array $arguments = []): static
     {
@@ -36,7 +36,7 @@ trait ResolvesRoutes
     }
 
     /**
-     * Get the URL resolver's route name.
+     * Get the URL resolver's route parameters.
      */
     public function getRouteArguments(): array
     {
@@ -44,7 +44,7 @@ trait ResolvesRoutes
     }
 
     /**
-     * Get the URL resolver's route name.
+     * Get a single URL resolver route parameter.
      */
     public function getRouteArgument(string $key): mixed
     {
@@ -52,7 +52,7 @@ trait ResolvesRoutes
     }
 
     /**
-     * Get the URL resolver's route name.
+     * Generate the effective URL.
      */
     public function resolve(array $arguments = []): string
     {

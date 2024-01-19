@@ -3,6 +3,8 @@
 namespace Whitecube\Links;
 
 use Illuminate\Support\Traits\Macroable;
+use Whitecube\Links\Resolvers\Route;
+use Whitecube\Links\Resolvers\Archive;
 use Whitecube\Links\Exceptions\ResolverNotFound;
 
 class Manager
@@ -27,19 +29,25 @@ class Manager
      */
     public function route(string $name, array $arguments = []): ResolverInterface
     {
-        $resolver = (new RouteResolver($name))->route($name, $arguments);
+        return $this->register((new Route($name))->route($name, $arguments));
+    }
 
-        $this->register($name, $resolver);
-
-        return $resolver;
+    /**
+     * Register a new resource Archive URLs resolver.
+     */
+    public function archive(string $key): ResolverInterface
+    {
+        return $this->register(new Archive($key));
     }
 
     /**
      * Register a named URL resolver instance in the link resolvers repository.
      */
-    public function register(string $key, ResolverInterface $resolver): void
+    public function register(ResolverInterface $resolver): ResolverInterface
     {
-        $this->repository->register($key, $resolver);
+        $this->repository->register($resolver);
+
+        return $resolver;
     }
 
     /**
@@ -61,7 +69,7 @@ class Manager
      */
     public function tryFor(string $key): ?ResolverInterface
     {
-        return $this->repository->get($key);
+        return $this->repository->match($key);
     }
 
     /**

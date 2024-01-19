@@ -14,4 +14,11 @@ class FakeResolver implements ResolverInterface
     {
         return null;
     }
+
+    /**
+     * Generate the effective URL.
+     */
+    public function resolve(array $arguments = []): string {
+        return '#';
+    }
 }

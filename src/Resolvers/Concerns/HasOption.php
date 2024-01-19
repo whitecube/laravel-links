@@ -1,6 +1,6 @@
 <?php
 
-namespace Whitecube\Links\Concerns;
+namespace Whitecube\Links\Resolvers\Concerns;
 
 use Closure;
 use Illuminate\Support\Facades\App;
@@ -26,14 +26,14 @@ trait HasOption
     /**
      * Resolve the displayable option title.
      */
-    public function getTitle(...$arguments): string
+    public function getTitle(mixed $item = null): string
     {
         if(is_null($this->title)) {
             return $this->key;
         }
 
         if(is_a($this->title, Closure::class)) {
-            return call_user_func_array($this->title, $arguments);
+            return call_user_func_array($this->title, $item);
         }
 
         return $this->title;

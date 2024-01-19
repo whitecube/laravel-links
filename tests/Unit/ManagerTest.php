@@ -32,6 +32,7 @@ it('can register macros', function () {
       $resolver = new class ($name) implements ResolverInterface {
             public function __construct(public string $name) {}
             public function toOption(): ?OptionInterface { return null; }
+            public function resolve(array $arguments = []): string { return '#'; }
       };
       $this->register('test.'.$name, $resolver);
       return $resolver;

@@ -12,17 +12,22 @@ class ResolverRepository
     /**
      * Add a new URL resolver to the repository.
      */
-    public function register(string $key, ResolverInterface $resolver): void
+    public function register(ResolverInterface $resolver): void
     {
-        $this->items[$key] = $resolver;
+        $this->items[] = $resolver;
     }
 
     /**
      * Retrieve a registered URL resolver by its key.
      */
-    public function get(string $key): ?ResolverInterface
+    public function match(string $key): ?ResolverInterface
     {
-        return $this->items[$key] ?? null;
+        foreach($this->items as $resolver) {
+            if(! ($instance = $resolver->for($key))) continue;
+            return $instance;
+        }
+
+        return null;
     }
 
     /**
