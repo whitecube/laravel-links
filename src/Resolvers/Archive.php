@@ -66,7 +66,8 @@ class Archive implements ResolverInterface
      */
     public function for(string $key): ?ResolverInterface
     {
-        return $this->index?->for($key)
+        return ($this->key === $key ? $this : null) 
+            ?? $this->index?->for($key)
             ?? $this->items?->for($key)
             ?? null;
     }

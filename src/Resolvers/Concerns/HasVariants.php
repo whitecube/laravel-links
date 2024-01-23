@@ -10,6 +10,7 @@ use Illuminate\Contracts\Database\Query\Builder;
 use Whitecube\Links\VariantsRepositoryInterface;
 use Whitecube\Links\Variants\Query as VariantsQuery;
 use Whitecube\Links\Variants\Collection as VariantsCollection;
+use Whitecube\Links\Variants\ModelQuery as VariantsModelQuery;
 use Whitecube\Links\Resolvers\IndexRoute;
 use Whitecube\Links\Exceptions\InvalidArgument;
 

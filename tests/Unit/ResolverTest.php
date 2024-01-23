@@ -2,8 +2,10 @@
 
 use Whitecube\Links\Manager;
 use Whitecube\Links\Resolvers\Route;
+use Whitecube\Links\Resolvers\Archive;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Contracts\Support\Arrayable;
+use Whitecube\Links\Tests\Fixtures\FakeModel;
 
 it('can register simple named route', function () {
    $service = new Manager();
@@ -51,13 +53,16 @@ it('can register resource archive with index page and resource entries from arra
          ])
       );
 
-   dd($resolver);
+   expect($resolver)->toBeInstanceOf(Archive::class);
+   expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->for('posts.index'))->toBeWorkingArchiveIndexResolver();
+   expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver();
 })->only();
 
 it('can register resource archive with resource entries from collection', function () {
    $service = new Manager();
 
-   $service->archive('posts')->items(function ($entry) {
+   $resolver = $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
          // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
@@ -67,12 +72,16 @@ it('can register resource archive with resource entries from collection', functi
             (object) ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
          ]));
       });
+
+   expect($resolver)->toBeInstanceOf(Archive::class);
+   expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver();
 })->only();
 
 it('can register resource archive with resource entries from arrayable object', function () {
    $service = new Manager();
 
-   $service->archive('posts')->items(function ($entry) {
+   $resolver = $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
          // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
@@ -86,12 +95,16 @@ it('can register resource archive with resource entries from arrayable object', 
             }
          });
       });
+
+   expect($resolver)->toBeInstanceOf(Archive::class);
+   expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver();
 })->only();
 
 it('can register resource archive with resource entries from closure', function () {
    $service = new Manager();
 
-   $service->archive('posts')->items(function ($entry) {
+   $resolver = $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
          // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
@@ -101,39 +114,55 @@ it('can register resource archive with resource entries from closure', function 
             (object) ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
          ]);
    });
+
+   expect($resolver)->toBeInstanceOf(Archive::class);
+   expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver();
 })->only();
 
 it('can register resource archive with resource entries from query', function () {
    $service = new Manager();
 
-   $service->archive('posts')->items(function ($entry) {
+   $resolver = $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
          // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
          ->query(fn () => FakeModel::query());
    });
+
+   expect($resolver)->toBeInstanceOf(Archive::class);
+   expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver();
 })->only();
 
 it('can register resource archive with resource entries from model', function () {
    $service = new Manager();
 
-   $service->archive('posts')->items(function ($entry) {
+   $resolver = $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
          // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
          ->model(FakeModel::class);
    });
+
+   expect($resolver)->toBeInstanceOf(Archive::class);
+   expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver();
 })->only();
 
 it('can register resource archive with resource entries from model query', function () {
    $service = new Manager();
 
-   $service->archive('posts')->items(function ($entry) {
+   $resolver = $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
          // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
          ->model(FakeModel::class, fn($query) => $query->testScope());
    });
+
+   expect($resolver)->toBeInstanceOf(Archive::class);
+   expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver();
 })->only();
 
 it('can resolve simple defined route', function () {
