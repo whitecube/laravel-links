@@ -8,6 +8,8 @@ use Whitecube\Links\ResolverInterface;
 
 class Archive implements ResolverInterface
 {
+    use Concerns\HasOption;
+    
     const INDEX_KEY = 'index';
     const ITEM_KEY = 'item';
 

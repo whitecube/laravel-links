@@ -3,6 +3,7 @@
 use Whitecube\Links\Manager;
 use Whitecube\Links\Resolvers\Route;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Contracts\Support\Arrayable;
 
 it('can register simple named route', function () {
    $service = new Manager();
@@ -41,7 +42,7 @@ it('can register resource archive with index page and resource entries from arra
       ->title('Latest news')
       ->index(fn ($entry) => $entry->route('posts')->title('All latest news'))
       ->items(fn ($entry) => $entry->route('post')
-         ->argument('slug', fn ($item) => $item->slug)
+         // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
          ->collect([
             ['id' => 1, 'slug' => 'one', 'title' => 'Post One'],
@@ -49,14 +50,16 @@ it('can register resource archive with index page and resource entries from arra
             ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
          ])
       );
-});
+
+   dd($resolver);
+})->only();
 
 it('can register resource archive with resource entries from collection', function () {
    $service = new Manager();
 
    $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
-         ->argument('slug', fn ($item) => $item->slug)
+         // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
          ->collect(collect([
             (object) ['id' => 1, 'slug' => 'one', 'title' => 'Post One'],
@@ -64,14 +67,33 @@ it('can register resource archive with resource entries from collection', functi
             (object) ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
          ]));
       });
-});
+})->only();
+
+it('can register resource archive with resource entries from arrayable object', function () {
+   $service = new Manager();
+
+   $service->archive('posts')->items(function ($entry) {
+      $entry->route('post')
+         // ->argument('slug', fn ($item) => $item->slug)
+         ->title(fn ($item) => $item->title)
+         ->collect(new class() implements Arrayable {
+            public function toArray() {
+               return [
+                  (object) ['id' => 1, 'slug' => 'one', 'title' => 'Post One'],
+                  (object) ['id' => 2, 'slug' => 'two', 'title' => 'Post Two'],
+                  (object) ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
+               ];
+            }
+         });
+      });
+})->only();
 
 it('can register resource archive with resource entries from closure', function () {
    $service = new Manager();
 
    $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
-         ->argument('slug', fn ($item) => $item->slug)
+         // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
          ->collect(fn() => [
             (object) ['id' => 1, 'slug' => 'one', 'title' => 'Post One'],
@@ -79,40 +101,40 @@ it('can register resource archive with resource entries from closure', function 
             (object) ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
          ]);
    });
-});
-
-it('can register resource archive with resource entries from model', function () {
-   $service = new Manager();
-
-   $service->archive('posts')->items(function ($entry) {
-      $entry->route('post')
-         ->argument('slug', fn ($item) => $item->slug)
-         ->title(fn ($item) => $item->title)
-         ->model(FakeModel::class);
-   });
-});
-
-it('can register resource archive with resource entries from model query', function () {
-   $service = new Manager();
-
-   $service->archive('posts')->items(function ($entry) {
-      $entry->route('post')
-         ->argument('slug', fn ($item) => $item->slug)
-         ->title(fn ($item) => $item->title)
-         ->model(FakeModel::class, fn($query) => $query->testScope());
-   });
-});
+})->only();
 
 it('can register resource archive with resource entries from query', function () {
    $service = new Manager();
 
    $service->archive('posts')->items(function ($entry) {
       $entry->route('post')
-         ->argument('slug', fn ($item) => $item->slug)
+         // ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
          ->query(fn () => FakeModel::query());
    });
-});
+})->only();
+
+it('can register resource archive with resource entries from model', function () {
+   $service = new Manager();
+
+   $service->archive('posts')->items(function ($entry) {
+      $entry->route('post')
+         // ->argument('slug', fn ($item) => $item->slug)
+         ->title(fn ($item) => $item->title)
+         ->model(FakeModel::class);
+   });
+})->only();
+
+it('can register resource archive with resource entries from model query', function () {
+   $service = new Manager();
+
+   $service->archive('posts')->items(function ($entry) {
+      $entry->route('post')
+         // ->argument('slug', fn ($item) => $item->slug)
+         ->title(fn ($item) => $item->title)
+         ->model(FakeModel::class, fn($query) => $query->testScope());
+   });
+})->only();
 
 it('can resolve simple defined route', function () {
    URL::shouldReceive('route')

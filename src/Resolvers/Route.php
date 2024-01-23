@@ -8,7 +8,6 @@ use Whitecube\Links\ResolverInterface;
 class Route implements ResolverInterface
 {
     use Concerns\ResolvesRoutes;
-    use Concerns\HasChildObjects;
     use Concerns\HasOption;
 
     /**

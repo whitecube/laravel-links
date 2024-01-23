@@ -7,9 +7,9 @@ use Whitecube\Links\ResolverInterface;
 
 class ArchiveItemsRoute implements ResolverInterface
 {
-    use Concerns\ResolvesRoutes;
-    use Concerns\HasChildObjects;
     use Concerns\HasOption;
+    use Concerns\HasVariants;
+    use Concerns\ResolvesRoutes;
 
     /**
      * The resolver's identification key.
