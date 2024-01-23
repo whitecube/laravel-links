@@ -84,4 +84,12 @@ class Archive implements ResolverInterface
             ->title($this->getTitle())
             ->children($children);
     }
+
+    /**
+     * Generate the effective URL.
+     */
+    public function resolve(array $arguments = []): string
+    {
+        return '#'; // TODO
+    }
 }

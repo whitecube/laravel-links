@@ -98,4 +98,20 @@ trait HasChildObjects
 
         return $this->index = $resolver;
     }
+
+    /**
+     * Get the declination objects as Options
+     */
+    protected function getChildOptions(): array
+    {
+        if(is_null($this->index) || is_a($this->index, IndexRoute::class)) {
+            return $this->index;
+        }
+
+        $resolver = new IndexRoute();
+
+        call_user_func($this->index, $resolver);
+
+        return $this->index = $resolver;
+    }
 }

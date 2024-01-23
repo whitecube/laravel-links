@@ -37,16 +37,16 @@ it('can register named route with default route parameters and specific title', 
 it('can register resource archive with index page and resource entries from array', function () {
    $service = new Manager();
 
-   $service->archive('posts')
+   $resolver = $service->archive('posts')
       ->title('Latest news')
       ->index(fn ($entry) => $entry->route('posts')->title('All latest news'))
       ->items(fn ($entry) => $entry->route('post')
          ->argument('slug', fn ($item) => $item->slug)
          ->title(fn ($item) => $item->title)
          ->collect([
-            (object) ['id' => 1, 'slug' => 'one', 'title' => 'Post One'],
-            (object) ['id' => 2, 'slug' => 'two', 'title' => 'Post Two'],
-            (object) ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
+            ['id' => 1, 'slug' => 'one', 'title' => 'Post One'],
+            ['id' => 2, 'slug' => 'two', 'title' => 'Post Two'],
+            ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
          ])
       );
 });

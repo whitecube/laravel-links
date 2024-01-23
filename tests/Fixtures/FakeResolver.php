@@ -7,6 +7,17 @@ use Whitecube\Links\ResolverInterface;
 
 class FakeResolver implements ResolverInterface
 {
+    public function __construct(protected string $key) {}
+
+    /**
+     * Check if this resolver is suited for the provided key and return
+     * itself or a more appropriate/specific resolver if available.
+     */
+    public function for(string $key): ?ResolverInterface
+    {
+        return ($key === $this->key) ? $this : null;
+    }
+
     /**
      * Transform the resolver into an available Link Option.
      */
@@ -18,7 +29,8 @@ class FakeResolver implements ResolverInterface
     /**
      * Generate the effective URL.
      */
-    public function resolve(array $arguments = []): string {
+    public function resolve(array $arguments = []): string
+    {
         return '#';
     }
 }

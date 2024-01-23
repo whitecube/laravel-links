@@ -8,11 +8,12 @@ use Whitecube\Links\Tests\Fixtures\FakeResolver;
 
 it('can define and find a resolver instance', function () {
    $service = new Manager();
-   $resolver = new FakeResolver();
+   $resolver = new FakeResolver('foo');
 
-   $service->register('foo', $resolver);
+   $service->register($resolver);
 
    expect($service->for('foo'))->toBe($resolver);
+   expect($service->tryFor('foo'))->toBe($resolver);
 });
 
 it('cannot find an undefined resolver instance', function () {
@@ -30,21 +31,21 @@ it('cannot find an undefined resolver instance and return null', function () {
 it('can register macros', function () {
    Manager::macro('foo', function(string $name) {
       $resolver = new class ($name) implements ResolverInterface {
-            public function __construct(public string $name) {}
+            public function __construct(public string $key) {}
+            public function for(string $key): ?ResolverInterface { return ($key === $this->key) ? $this : null; }
             public function toOption(): ?OptionInterface { return null; }
             public function resolve(array $arguments = []): string { return '#'; }
       };
-      $this->register('test.'.$name, $resolver);
+      $this->register($resolver);
       return $resolver;
    });
 
    $service = new Manager();
    $service->foo('bar');
 
-   $resolver = $service->for('test.bar');
-
-   expect($resolver)->toBeInstanceOf(ResolverInterface::class);
-   expect($resolver->name)->toBe('bar');
+   expect($service->tryFor('bar'))->toBeInstanceOf(ResolverInterface::class);
+   expect($service->tryFor('foo'))->toBeNull();
+   expect($service->for('bar'))->toBeInstanceOf(ResolverInterface::class);
 });
 
 it('can return link options list', function () {
