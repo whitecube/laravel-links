@@ -12,7 +12,7 @@ interface OptionInterface
     /**
      * Return the identification key for the eventual object/resource/model represented by this link option.
      */
-    public function getObjectKey(): null|int|string;
+    public function getVariantKey(): null|int|string;
 
     /**
      * Define the link option's default displayable title.

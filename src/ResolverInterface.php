@@ -13,7 +13,7 @@ interface ResolverInterface
     /**
      * Transform the resolver into an available Link Option.
      */
-    public function toOption(): ?OptionInterface;
+    public function toOption(): null|OptionInterface|OptionsCollection;
 
     /**
      * Generate the effective URL.

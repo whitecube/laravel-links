@@ -3,6 +3,7 @@
 namespace Whitecube\Links\Resolvers;
 
 use Whitecube\Links\OptionInterface;
+use Whitecube\Links\OptionsCollection;
 use Whitecube\Links\ResolverInterface;
 
 class Route implements ResolverInterface
@@ -35,7 +36,7 @@ class Route implements ResolverInterface
     /**
      * Transform the resolver into an available Link Option.
      */
-    public function toOption(): ?OptionInterface
+    public function toOption(): null|OptionInterface|OptionsCollection
     {
         return $this->getOptionInstance()
             ->title($this->getTitle())

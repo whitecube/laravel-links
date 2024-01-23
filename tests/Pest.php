@@ -28,20 +28,6 @@ use Whitecube\Links\OptionInterface;
 |
 */
 
-expect()->extend('toBeWorkingArchiveResolver', function () {
-    // TODO : add common archive resolver tests.
-    // dd($this);
-});
-
-expect()->extend('toBeWorkingArchiveIndexResolver', function () {
-    // TODO : add common archive resolver tests.
-    // dd($this);
-});
-
-expect()->extend('toBeWorkingArchiveItemsResolver', function () {
-    // TODO : add common archive resolver tests.
-    // dd($this);
-});
 
 /*
 |--------------------------------------------------------------------------

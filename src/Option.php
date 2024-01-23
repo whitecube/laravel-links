@@ -10,9 +10,9 @@ class Option implements OptionInterface
     protected string $resolver;
 
     /**
-     * The URL resolver's identification key.
+     * The represented variant object's identification key.
      */
-    protected null|int|string $object = null;
+    protected null|int|string $variant = null;
 
     /**
      * The default displayable title.
@@ -32,10 +32,10 @@ class Option implements OptionInterface
     /**
      * Create a new Link Option instance.
      */
-    public function __construct(string $resolver, null|int|string $object = null)
+    public function __construct(string $resolver, null|int|string $variant = null)
     {
         $this->resolver = $resolver;
-        $this->object = $object;
+        $this->variant = $variant;
     }
 
     /**
@@ -49,9 +49,9 @@ class Option implements OptionInterface
     /**
      * Return the identification key for the eventual object/resource/model represented by this link option.
      */
-    public function getObjectKey(): null|int|string
+    public function getVariantKey(): null|int|string
     {
-        return $this->object;
+        return $this->variant;
     }
 
     /**

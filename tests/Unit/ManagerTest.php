@@ -2,6 +2,7 @@
 
 use Whitecube\Links\Manager;
 use Whitecube\Links\OptionInterface;
+use Whitecube\Links\OptionsCollection;
 use Whitecube\Links\ResolverInterface;
 use Whitecube\Links\Exceptions\ResolverNotFound;
 use Whitecube\Links\Tests\Fixtures\FakeResolver;
@@ -33,7 +34,7 @@ it('can register macros', function () {
       $resolver = new class ($name) implements ResolverInterface {
             public function __construct(public string $key) {}
             public function for(string $key): ?ResolverInterface { return ($key === $this->key) ? $this : null; }
-            public function toOption(): ?OptionInterface { return null; }
+            public function toOption(): null|OptionInterface|OptionsCollection { return null; }
             public function resolve(array $arguments = []): string { return '#'; }
       };
       $this->register($resolver);

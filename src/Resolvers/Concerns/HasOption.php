@@ -5,6 +5,7 @@ namespace Whitecube\Links\Resolvers\Concerns;
 use Closure;
 use Illuminate\Support\Facades\App;
 use Whitecube\Links\OptionInterface;
+use Whitecube\Links\OptionsCollection;
 
 trait HasOption
 {
@@ -26,17 +27,26 @@ trait HasOption
     /**
      * Resolve the displayable option title.
      */
-    public function getTitle(mixed $item = null): string
+    public function getTitle(mixed $variant = null): string
     {
-        if(is_null($this->title)) {
-            return $this->key;
-        }
+        $value = is_a($this->title, Closure::class)
+            ? call_user_func($this->title, $variant)
+            : $this->title;
 
-        if(is_a($this->title, Closure::class)) {
-            return call_user_func_array($this->title, $item);
-        }
+        return $value ? strval($value) : $this->key;
+    }
 
-        return $this->title;
+    /**
+     * Transform provided variants into displayable option instances.
+     */
+    protected function toOptionsCollection(array $variants): OptionsCollection
+    {
+        $options = array_map(function(mixed $variant) {
+            return $this->getOptionInstance()
+                ->title($this->getTitle($variant));
+        }, $variants);
+
+        return $this->getOptionsCollection($options);
     }
 
     /**
@@ -45,5 +55,13 @@ trait HasOption
     protected function getOptionInstance(): OptionInterface
     {
         return App::makeWith(OptionInterface::class, ['resolver' => $this->key]);
+    }
+
+    /**
+     * Create a new empty collection of options for this resolver
+     */
+    protected function getOptionsCollection(array $options): OptionsCollection
+    {
+        return new OptionsCollection($options);
     }
 }

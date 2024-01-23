@@ -90,4 +90,16 @@ trait HasVariants
 
         return $this;
     }
+
+    /**
+     * Retrieve all variants from the current variants repository.
+     */
+    protected function getAllVariants(): array
+    {
+        if(! $this->variants) {
+            return [];
+        }
+
+        return $this->variants->all();
+    }
 }

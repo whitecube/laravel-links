@@ -4,6 +4,7 @@ namespace Whitecube\Links\Resolvers;
 
 use Closure;
 use Whitecube\Links\OptionInterface;
+use Whitecube\Links\OptionsCollection;
 use Whitecube\Links\ResolverInterface;
 
 class Archive implements ResolverInterface
@@ -75,7 +76,7 @@ class Archive implements ResolverInterface
     /**
      * Transform the resolver into an available Link Option.
      */
-    public function toOption(): ?OptionInterface
+    public function toOption(): null|OptionInterface|OptionsCollection
     {
         $children = $this->getChildOptions();
 

@@ -26,4 +26,19 @@ class ModelQuery extends Query
         $this->query = $classname::query();
         $this->queryCallback = $queryCallback;
     }
+
+    /**
+     * Return the prepared query that should be executed.
+     */
+    protected function getExecutableQuery(): Builder
+    {
+        if($this->queryCallback) {
+            call_user_func($this->queryCallback, $this->query);
+            // once executed, we do not need to keep the callback in order to prevent
+            // to execute it again next time the query needs to be executed.
+            $this->queryCallback = null;
+        }
+
+        return $this->query;
+    }
 }

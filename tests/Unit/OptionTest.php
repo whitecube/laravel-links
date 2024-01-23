@@ -7,14 +7,14 @@ it('can be instantiated with resolver & object keys', function () {
     $option = new Option('foo','bar');
 
     expect($option->getResolverKey())->toBe('foo');
-    expect($option->getObjectKey())->toBe('bar');
+    expect($option->getVariantKey())->toBe('bar');
 });
 
 it('can be instantiated with resolver key but without object key', function () {
     $option = new Option('foo');
 
     expect($option->getResolverKey())->toBe('foo');
-    expect($option->getObjectKey())->toBeNull();
+    expect($option->getVariantKey())->toBeNull();
 });
 
 it('can define a displayable title', function () {
@@ -64,7 +64,7 @@ it('can define and return sub-options', function () {
     $child1 = new Option('bar');
     $child2 = new class() implements OptionInterface {
         public function getResolverKey(): string { return 'custom'; }
-        public function getObjectKey(): null|int|string { return null; }
+        public function getVariantKey(): null|int|string { return null; }
         public function title(string $title): static { return $this; }
         public function getTitle(): string { return 'custom-title'; }
         public function arguments(array $arguments): static { return $this; }

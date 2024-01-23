@@ -18,4 +18,12 @@ class Collection implements VariantsRepositoryInterface
     {
         $this->items = $items;
     }
+
+    /**
+     * Return all available variants.
+     */
+    public function all(): array
+    {
+        return $this->items;
+    }
 }
