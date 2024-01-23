@@ -41,4 +41,18 @@ class ModelQuery extends Query
 
         return $this->query;
     }
+
+    /**
+     * Return an unique identifying key for the provided item.
+     */
+    protected function getVariantKey(mixed $item, int|string $index): int|string
+    {
+        $default = parent::getVariantKey($item, $index);
+
+        if(! is_a($item, $this->classname) || ($default !== $index)) {
+            return $default;
+        }
+
+        return $item->getKey();
+    }
 }

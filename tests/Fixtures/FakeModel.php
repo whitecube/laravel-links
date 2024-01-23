@@ -14,6 +14,8 @@ class FakeModel extends Model
         ['id' => 3, 'slug' => 'three', 'title' => 'Post Three'],
     ];
 
+    protected $guarded = [];
+
     /**
      * Begin querying the model.
      */
@@ -25,8 +27,8 @@ class FakeModel extends Model
             public function get(): Collection
             {
                 $results = new Collection($this->items);
-                if(!is_null($this->limit)) return $results->take($this->limit);
-                return $results;
+                if(!is_null($this->limit)) $results = $results->take($this->limit);
+                return $results->map(fn($data) => new FakeModel($data));
             }
             public function limit(int $items): static
             {

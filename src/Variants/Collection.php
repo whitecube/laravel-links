@@ -2,6 +2,8 @@
 
 namespace Whitecube\Links\Variants;
 
+use Closure;
+use Whitecube\Links\Variant;
 use Whitecube\Links\VariantsRepositoryInterface;
 
 class Collection implements VariantsRepositoryInterface
@@ -16,7 +18,19 @@ class Collection implements VariantsRepositoryInterface
      */
     public function __construct(array $items)
     {
-        $this->items = $items;
+        $this->items = array_map(fn($key, $value) => new Variant($value, $key), array_keys($items), array_values($items));
+    }
+
+    /**
+     * Set the "key" attribute or closure capable of identifying the variants
+     */
+    public function keyBy(string|Closure $attribute): void
+    {
+        $this->items = array_map(function($variant) use ($attribute) {
+            $data = $variant->raw();
+            $key = is_a($attribute, Closure::class) ? call_user_func($attribute, $data) : $variant->$attribute;
+            return new Variant($data, $key);
+        }, $this->items);
     }
 
     /**

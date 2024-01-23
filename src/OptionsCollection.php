@@ -32,4 +32,12 @@ class OptionsCollection
     {
         return count($this->options);
     }
+
+    /**
+     * Get all defined options as array.
+     */
+    public function all(): array
+    {
+        return $this->options;
+    }
 }

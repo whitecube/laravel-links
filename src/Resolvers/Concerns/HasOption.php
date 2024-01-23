@@ -3,9 +3,10 @@
 namespace Whitecube\Links\Resolvers\Concerns;
 
 use Closure;
-use Illuminate\Support\Facades\App;
+use Whitecube\Links\Variant;
 use Whitecube\Links\OptionInterface;
 use Whitecube\Links\OptionsCollection;
+use Illuminate\Support\Facades\App;
 
 trait HasOption
 {
@@ -27,13 +28,15 @@ trait HasOption
     /**
      * Resolve the displayable option title.
      */
-    public function getTitle(mixed $variant = null): string
+    public function getTitle(Variant $variant = null): string
     {
         $value = is_a($this->title, Closure::class)
-            ? call_user_func($this->title, $variant)
+            ? call_user_func($this->title, $variant->isStructure() ? $variant : $variant->raw())
             : $this->title;
 
-        return $value ? strval($value) : $this->key;
+        return ($value)
+            ? strval($value)
+            : $this->key.($variant ? '#'.$variant->getKey() : '');
     }
 
     /**
@@ -41,8 +44,8 @@ trait HasOption
      */
     protected function toOptionsCollection(array $variants): OptionsCollection
     {
-        $options = array_map(function(mixed $variant) {
-            return $this->getOptionInstance()
+        $options = array_map(function(Variant $variant) {
+            return $this->getOptionInstance($variant->getKey())
                 ->title($this->getTitle($variant));
         }, $variants);
 
@@ -52,9 +55,9 @@ trait HasOption
     /**
      * Create a new empty option instance for this resolver.
      */
-    protected function getOptionInstance(): OptionInterface
+    protected function getOptionInstance(null|int|string $variant = null): OptionInterface
     {
-        return App::makeWith(OptionInterface::class, ['resolver' => $this->key]);
+        return App::makeWith(OptionInterface::class, ['resolver' => $this->key, 'variant' => $variant]);
     }
 
     /**

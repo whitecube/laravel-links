@@ -92,6 +92,20 @@ trait HasVariants
     }
 
     /**
+     * Set the "key" attribute or closure capable of identifying the variants
+     */
+    public function keyBy(string|Closure $attribute): static
+    {
+        if(! $this->variants) {
+            return $this;
+        }
+
+        $this->variants->keyBy($attribute);
+
+        return $this;
+    }
+
+    /**
      * Retrieve all variants from the current variants repository.
      */
     protected function getAllVariants(): array
