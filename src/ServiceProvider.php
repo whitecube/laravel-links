@@ -13,5 +13,6 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
         $this->app->bind(OptionInterface::class, Option::class);
+        $this->app->bind(OptionsArchive::class, OptionsArchive::class);
     }
 }

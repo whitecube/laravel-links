@@ -3,8 +3,9 @@
 namespace Whitecube\Links;
 
 use Closure;
+use JsonSerializable;
 
-interface OptionInterface
+interface OptionInterface extends JsonSerializable
 {
     /**
      * Return the identification key for this link option's URL resolver.

@@ -2,7 +2,9 @@
 
 namespace Whitecube\Links;
 
-class OptionPanel
+use JsonSerializable;
+
+class OptionPanel implements JsonSerializable
 {
     /**
      * The options to display at the top of the panel.
@@ -59,5 +61,13 @@ class OptionPanel
             [$this->archive],
             $this->after,
         )));
+    }
+
+    /**
+     * Prepare the panel for proper front-end display.
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->options();
     }
 }

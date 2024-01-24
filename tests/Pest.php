@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\App;
 use Whitecube\Links\Option;
+use Whitecube\Links\OptionsArchive;
 use Whitecube\Links\OptionInterface;
 
 /*
@@ -46,6 +47,7 @@ function setupAppBindings()
         public function makeWith(string $classname, array $arguments = []) {
             return match ($classname) {
                 OptionInterface::class => new Option(...$arguments),
+                OptionsArchive::class => new OptionsArchive(...$arguments),
                 default => null,
             };
         }

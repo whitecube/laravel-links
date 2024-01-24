@@ -5,6 +5,7 @@ namespace Whitecube\Links\Resolvers\Concerns;
 use Closure;
 use Whitecube\Links\Variant;
 use Whitecube\Links\OptionInterface;
+use Whitecube\Links\OptionsArchive;
 use Whitecube\Links\OptionsCollection;
 use Illuminate\Support\Facades\App;
 
@@ -67,6 +68,6 @@ trait HasOption
      */
     protected function getOptionsCollection(array $options): OptionsCollection
     {
-        return new OptionsCollection($options);
+        return App::makeWith(OptionsArchive::class, ['items' => $options]);
     }
 }

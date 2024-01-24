@@ -82,6 +82,7 @@ it('can define and return sub-options', function () {
         public function hasChoices(): bool { return false; }
         public function choices(Closure $setup): static { return $this; }
         public function getChoices(): ?OptionPanel { return null; }
+        public function jsonSerialize(): mixed { return []; }
     };
 
     expect($option->hasChoices())->toBeFalse();

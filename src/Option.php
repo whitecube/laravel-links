@@ -163,4 +163,18 @@ class Option implements OptionInterface
     {
         return $this->panel;
     }
+
+    /**
+     * Specify data which should be serialized to JSON for proper front-end display of this option.
+     */
+    public function jsonSerialize(): array
+    {
+        return array_filter([
+            'type' => $this->hasChoices() ? 'panel' : 'option',
+            'label' => $this->getTitle(),
+            'value' => $this->hasChoices() ? null : $this->getKey(),
+            'arguments' => $this->getArguments() ?: null,
+            'options' => $this->getChoices(),
+        ]);
+    }
 }
