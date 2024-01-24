@@ -2,6 +2,8 @@
 
 namespace Whitecube\Links;
 
+use Closure;
+
 interface OptionInterface
 {
     /**
@@ -42,17 +44,17 @@ interface OptionInterface
     public function getArguments(): array;
 
     /**
-     * Set an array of sub-options.
+     * Check if this option has a displayable panel of sub-options.
      */
-    public function children(array $options): static;
+    public function hasChoices(): bool;
 
     /**
-     * Check if this option has sub-options.
+     * Define a displayable panel of sub-options.
      */
-    public function hasChildren(): bool;
+    public function choices(Closure $setup): static;
 
     /**
-     * Return the eventual sub-options.
+     * Return the option's displayable panel of sub-options when defined.
      */
-    public function getChildren(): array;
+    public function getChoices(): ?OptionPanel;
 }

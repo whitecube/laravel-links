@@ -2,6 +2,8 @@
 
 namespace Whitecube\Links;
 
+use Closure;
+
 class Option implements OptionInterface
 {
     /**
@@ -25,9 +27,9 @@ class Option implements OptionInterface
     protected array $arguments = [];
 
     /**
-     * The sub-options for this parent option.
+     * The eventual sub-options for this option configured into a displayable panel.
      */
-    protected array $children = [];
+    protected ?OptionPanel $panel = null;
 
     /**
      * Create a new Link Option instance.
@@ -135,28 +137,30 @@ class Option implements OptionInterface
     }
 
     /**
-     * Set an array of sub-options.
+     * Check if this option has a displayable panel of sub-options.
      */
-    public function children(array $options): static
+    public function hasChoices(): bool
     {
-        $this->children = array_filter($options, fn($option) => is_a($option, OptionInterface::class));
+        return ! is_null($this->panel);
+    }
+
+    /**
+     * Define a displayable panel of sub-options.
+     */
+    public function choices(Closure $setup): static
+    {
+        $this->panel = new OptionPanel();
+
+        $setup($this->panel);
 
         return $this;
     }
 
     /**
-     * Check if this option has sub-options.
+     * Return the option's displayable panel of sub-options when defined.
      */
-    public function hasChildren(): bool
+    public function getChoices(): ?OptionPanel
     {
-        return ! empty($this->children);
-    }
-
-    /**
-     * Return the eventual sub-options.
-     */
-    public function getChildren(): array
-    {
-        return $this->children;
+        return $this->panel;
     }
 }

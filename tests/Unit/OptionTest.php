@@ -1,7 +1,9 @@
 <?php
 
 use Whitecube\Links\Option;
+use Whitecube\Links\OptionPanel;
 use Whitecube\Links\OptionInterface;
+use Whitecube\Links\OptionsCollection;
 
 it('can be instantiated with resolver & object keys', function () {
     $option = new Option('foo','bar');
@@ -67,8 +69,9 @@ it('can magically define and read extra arguments', function () {
 
 it('can define and return sub-options', function () {
     $option = new Option('foo');
-    $child1 = new Option('bar');
-    $child2 = new class() implements OptionInterface {
+
+    $header = new Option('bar');
+    $footer = new class() implements OptionInterface {
         public function getResolverKey(): string { return 'custom'; }
         public function getVariantKey(): null|int|string { return null; }
         public function title(string $title): static { return $this; }
@@ -76,15 +79,27 @@ it('can define and return sub-options', function () {
         public function arguments(array $arguments): static { return $this; }
         public function argument(string $attribute, mixed $value): static { return $this; }
         public function getArguments(): array { return []; }
-        public function children(array $options): static { return $this; }
-        public function hasChildren(): bool { return false; }
-        public function getChildren(): array { return []; }
+        public function hasChoices(): bool { return false; }
+        public function choices(Closure $setup): static { return $this; }
+        public function getChoices(): ?OptionPanel { return null; }
     };
-    $child3 = new class() {};
 
-    expect($option->hasChildren())->toBeFalse();
-    expect($option->getChildren())->toBeArray()->toHaveCount(0);
-    expect($option->children([$child1,$child2,$child3]))->toBe($option);
-    expect($option->hasChildren())->toBeTrue();
-    expect($option->getChildren())->toBeArray()->toHaveCount(2)->toMatchArray([$child1,$child2]);
+    expect($option->hasChoices())->toBeFalse();
+    expect($option->getChoices())->toBeNull();
+    expect($option->choices(fn(OptionPanel $panel) => $panel->prepend($header)->append($footer)))->toBe($option);
+    expect($option->hasChoices())->toBeTrue();
+
+    $panel = $option->getChoices();
+    expect($panel)->toBeInstanceOf(OptionPanel::class);
+    $serialized = $panel->options();
+    expect($serialized)->toBeArray();
+    expect($serialized)->toHaveCount(2);
+    expect($serialized)->toMatchArray([$header, $footer]);
+
+    $collection = new OptionsCollection;
+    expect($panel->archive($collection))->toBe($panel);
+    $serialized = $panel->options();
+    expect($serialized)->toBeArray();
+    expect($serialized)->toHaveCount(3);
+    expect($serialized)->toMatchArray([$header, $collection, $footer]);
 });

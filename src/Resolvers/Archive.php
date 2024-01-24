@@ -3,6 +3,7 @@
 namespace Whitecube\Links\Resolvers;
 
 use Closure;
+use Whitecube\Links\OptionPanel;
 use Whitecube\Links\OptionInterface;
 use Whitecube\Links\OptionsCollection;
 use Whitecube\Links\ResolverInterface;
@@ -78,15 +79,29 @@ class Archive implements ResolverInterface
      */
     public function toOption(): null|OptionInterface|OptionsCollection
     {
-        $children = $this->getChildOptions();
+        if(! $this->items && ! $this->index) {
+            return null;
+        }
 
-        if($children && ($index = $this->getIndexResolver())) {
-            return $index->toOption()->children($children);
+        if(! $this->items) {
+            return $this->index->toOption();
         }
 
         return $this->getOptionInstance()
             ->title($this->getTitle())
-            ->children($children);
+            ->choices(fn(OptionPanel $panel) => $this->configureOptionChoicesPanel($panel));
+    }
+
+    /**
+     * Handle the archives's displayable sub-options panel.
+     */
+    protected function configureOptionChoicesPanel(OptionPanel $panel): void
+    {
+        if($this->index) {
+            $panel->prepend($this->index->toOption());
+        }
+
+        $panel->archive($this->items->toOption());
     }
 
     /**
