@@ -2,42 +2,28 @@
 
 namespace Whitecube\Links;
 
-class OptionsCollection
+use Illuminate\Support\Collection;
+
+class OptionsCollection extends Collection
 {
     /**
-     * The defined options.
+     * Results array of items from Collection or Arrayable.
      */
-    protected array $options = [];
-
-    /**
-     * Create an options collections.
-     */
-    public function __construct(array $options)
+    protected function getArrayableItems($items)
     {
-        $this->options = array_values(array_filter($options, fn($value) => is_a($value, OptionInterface::class)));
+        return array_values(array_filter(
+            parent::getArrayableItems($items),
+            fn($item) => is_a($item, OptionInterface::class)
+        ));
     }
 
     /**
-     * Get the first defined option.
-     */
-    public function first(): ?OptionInterface
-    {
-        return $this->options[0] ?? null;
-    }
-
-    /**
-     * Get the amount of defined options.
+     * Return the total amount of options that should be contained in this collection.
+     * TODO : this method anticipates the development of paginated OptionsCollections used
+     * in huge Archive resolvers.
      */
     public function total(): int
     {
-        return count($this->options);
-    }
-
-    /**
-     * Get all defined options as array.
-     */
-    public function all(): array
-    {
-        return $this->options;
+        return $this->count();
     }
 }

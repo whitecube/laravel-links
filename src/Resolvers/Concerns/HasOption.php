@@ -30,13 +30,15 @@ trait HasOption
      */
     public function getTitle(Variant $variant = null): string
     {
-        $value = is_a($this->title, Closure::class)
-            ? call_user_func($this->title, $variant->isStructure() ? $variant : $variant->raw())
-            : $this->title;
+        $argument = (! is_null($variant))
+            ? ($variant->isStructure() ? $variant : $variant->raw())
+            : null;
 
-        return ($value)
-            ? strval($value)
-            : $this->key.($variant ? '#'.$variant->getKey() : '');
+        $value = is_a($this->title, Closure::class)
+            ? strval(call_user_func($this->title, $argument))
+            : ($this->title ?? '');
+
+        return trim($value);
     }
 
     /**

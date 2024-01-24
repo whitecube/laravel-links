@@ -38,8 +38,6 @@ class Route implements ResolverInterface
      */
     public function toOption(): null|OptionInterface|OptionsCollection
     {
-        return $this->getOptionInstance()
-            ->title($this->getTitle())
-            ->children($children);
+        return $this->getOptionInstance()->title($this->getTitle());
     }
 }

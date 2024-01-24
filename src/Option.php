@@ -53,13 +53,27 @@ class Option implements OptionInterface
     {
         return $this->variant;
     }
+    
+    /**
+     * Return the full resolver+variant identification key.
+     */
+    public function getKey(): string
+    {
+        $key = $this->getResolverKey();
+
+        if($variant = $this->getVariantKey()) {
+            $key .= '@'.$variant;
+        }
+
+        return $key;
+    }
 
     /**
      * Define the link option's default displayable title.
      */
     public function title(string $title): static
     {
-        $this->title = $title;
+        $this->title = strlen($title) ? $title : null;
 
         return $this;
     }
@@ -69,7 +83,7 @@ class Option implements OptionInterface
      */
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? $this->getKey();
     }
 
     /**

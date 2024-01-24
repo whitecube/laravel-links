@@ -8,6 +8,7 @@ it('can be instantiated with resolver & object keys', function () {
 
     expect($option->getResolverKey())->toBe('foo');
     expect($option->getVariantKey())->toBe('bar');
+    expect($option->getKey())->toBe('foo@bar');
 });
 
 it('can be instantiated with resolver key but without object key', function () {
@@ -15,12 +16,17 @@ it('can be instantiated with resolver key but without object key', function () {
 
     expect($option->getResolverKey())->toBe('foo');
     expect($option->getVariantKey())->toBeNull();
+    expect($option->getKey())->toBe('foo');
 });
 
 it('can define a displayable title', function () {
-    $option = new Option('foo');
+    $option = new Option('foo','bar');
 
-    expect($option->title('This is a testing title'))->toBe($option);
+    expect($option->getTitle())->toBe('foo@bar');
+    expect($option->title(''))->toBe($option);
+    expect($option->getTitle())->toBe('foo@bar');
+
+    $option->title('This is a testing title');
     expect($option->getTitle())->toBe('This is a testing title');
 });
 

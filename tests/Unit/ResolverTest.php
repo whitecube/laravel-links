@@ -51,7 +51,7 @@ it('can register simple named route', function () {
    expect($resolver->getRouteName())->toBe('foo');
    expect($resolver->getRouteArguments())->toBeArray();
    expect($resolver->getRouteArguments())->toHaveCount(0);
-   expect($resolver->getTitle())->toBe('foo');
+   expect($resolver->getTitle())->toBeEmpty();
 
    expect($service->for('foo'))->toBe($resolver);
 });
@@ -59,8 +59,7 @@ it('can register simple named route', function () {
 it('can register named route with default route parameters and specific title', function () {
    $service = new Manager();
 
-   $resolver = $service->route('foo', ['bar' => 'test'])
-      ->title('Foo Page');
+   $resolver = $service->route('foo', ['bar' => 'test'])->title('Foo Page');
 
    expect($resolver)->toBeInstanceOf(Route::class);
    expect($resolver->getRouteName())->toBe('foo');

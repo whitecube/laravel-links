@@ -2,8 +2,6 @@
 
 namespace Whitecube\Links;
 
-use Illuminate\Support\Collection;
-
 class OptionsCollectionBuilder
 {
     /**
@@ -30,9 +28,9 @@ class OptionsCollectionBuilder
 
         $keep = [];
 
-        foreach($this->resolvers as $key => $resolver) {
-            if(in_array($key, $keys)) continue;
-            $keep[$key] = $resolver;
+        foreach($this->resolvers as $resolver) {
+            if(in_array($resolver->key, $keys)) continue;
+            $keep[] = $resolver;
         }
 
         return new static($keep);
@@ -49,9 +47,9 @@ class OptionsCollectionBuilder
 
         $keep = [];
 
-        foreach($this->resolvers as $key => $resolver) {
-            if(! in_array($key, $keys)) continue;
-            $keep[$key] = $resolver;
+        foreach($this->resolvers as $resolver) {
+            if(! in_array($resolver->key, $keys)) continue;
+            $keep[] = $resolver;
         }
 
         return new static($keep);
@@ -78,15 +76,15 @@ class OptionsCollectionBuilder
     /**
      * Transform the selected resolvers into a collection of concrete Links.
      */
-    public function toCollection(): Collection
+    public function toCollection(): OptionsCollection
     {
-        return new Collection($this->toArray());
+        return new OptionsCollection($this->toArray());
     }
 
     /**
      * Alias of toCollection.
      */
-    public function get(): Collection
+    public function get(): OptionsCollection
     {
         return $this->toCollection();
     }
