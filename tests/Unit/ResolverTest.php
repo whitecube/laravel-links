@@ -72,6 +72,28 @@ it('can register named route with default route parameters and specific title', 
    expect($service->for('foo'))->toBe($resolver);
 });
 
+it('can resolve simple defined route', function () {
+   URL::shouldReceive('route')
+      ->once()
+      ->with('foo', [])
+      ->andReturn('https://foo.bar/testing-route');
+
+   $resolver = (new Route('some-key'))->route('foo');
+
+   expect($resolver->resolve())->toBe('https://foo.bar/testing-route');
+});
+
+it('can resolve defined route with arguments', function () {
+   URL::shouldReceive('route')
+      ->once()
+      ->with('foo', ['bar' => 'test', 'foo' => 'bar'])
+      ->andReturn('https://foo.bar/testing-route');
+
+   $resolver = (new Route('some-key'))->route('foo', ['bar' => 'overwritten', 'foo' => 'bar']);
+
+   expect($resolver->resolve(['bar' => 'test']))->toBe('https://foo.bar/testing-route');
+});
+
 it('can register resource archive with index page and resource entries from array', function () {
    setupAppBindings();
 
@@ -110,6 +132,7 @@ it('can register resource archive with resource entries from collection', functi
 
    expect($resolver)->toBeInstanceOf(Archive::class);
    expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->tryFor('posts.index'))->toBeNull();
    expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver(
       collect(FakeModel::$items)->mapWithKeys(fn($item) => [$item['id'] => $item['title']])
    );
@@ -134,6 +157,7 @@ it('can register resource archive with resource entries from arrayable object', 
 
    expect($resolver)->toBeInstanceOf(Archive::class);
    expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->tryFor('posts.index'))->toBeNull();
    expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver(
       collect(FakeModel::$items)->mapWithKeys(fn($item) => [$item['id'] => $item['title']])
    );
@@ -154,6 +178,7 @@ it('can register resource archive with resource entries from closure', function 
 
    expect($resolver)->toBeInstanceOf(Archive::class);
    expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->tryFor('posts.index'))->toBeNull();
    expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver(
       collect(FakeModel::$items)->mapWithKeys(fn($item) => [$item['id'] => $item['title']])
    );
@@ -174,6 +199,7 @@ it('can register resource archive with resource entries from query', function ()
 
    expect($resolver)->toBeInstanceOf(Archive::class);
    expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->tryFor('posts.index'))->toBeNull();
    expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver(
       collect(FakeModel::$items)->mapWithKeys(fn($item) => [$item['id'] => $item['title']])
    );
@@ -193,6 +219,7 @@ it('can register resource archive with resource entries from model', function ()
 
    expect($resolver)->toBeInstanceOf(Archive::class);
    expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->tryFor('posts.index'))->toBeNull();
    expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver(
       collect(FakeModel::$items)->mapWithKeys(fn($item) => [$item['id'] => $item['title']])
    );
@@ -212,29 +239,8 @@ it('can register resource archive with resource entries from model query', funct
 
    expect($resolver)->toBeInstanceOf(Archive::class);
    expect($service->for('posts'))->toBeWorkingArchiveResolver();
+   expect($service->tryFor('posts.index'))->toBeNull();
    expect($service->for('posts.item'))->toBeWorkingArchiveItemsResolver(
       collect(FakeModel::$items)->take(2)->mapWithKeys(fn($item) => [$item['id'] => $item['title']])
    );
-});
-
-it('can resolve simple defined route', function () {
-   URL::shouldReceive('route')
-      ->once()
-      ->with('foo', [])
-      ->andReturn('https://foo.bar/testing-route');
-
-   $resolver = (new Route('some-key'))->route('foo');
-
-   expect($resolver->resolve())->toBe('https://foo.bar/testing-route');
-});
-
-it('can resolve defined route with arguments', function () {
-   URL::shouldReceive('route')
-      ->once()
-      ->with('foo', ['bar' => 'test', 'foo' => 'bar'])
-      ->andReturn('https://foo.bar/testing-route');
-
-   $resolver = (new Route('some-key'))->route('foo', ['bar' => 'overwritten', 'foo' => 'bar']);
-
-   expect($resolver->resolve(['bar' => 'test']))->toBe('https://foo.bar/testing-route');
 });
