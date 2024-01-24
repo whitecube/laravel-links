@@ -9,14 +9,14 @@ interface ResolverInterface
      * itself or a more appropriate/specific resolver if available.
      */
     public function for(string $key): ?ResolverInterface;
+
+    /**
+     * Instantiate a Link object based on provided serialized value.
+     */
+    public function resolve(array $value, bool $silent): ?Link;
     
     /**
      * Transform the resolver into an available Link Option.
      */
     public function toOption(): null|OptionInterface|OptionsCollection;
-
-    /**
-     * Generate the effective URL.
-     */
-    public function resolve(array $arguments = []): string;
 }

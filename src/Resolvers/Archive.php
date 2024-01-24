@@ -3,10 +3,12 @@
 namespace Whitecube\Links\Resolvers;
 
 use Closure;
+use Whitecube\Links\Link;
 use Whitecube\Links\OptionPanel;
 use Whitecube\Links\OptionInterface;
 use Whitecube\Links\OptionsCollection;
 use Whitecube\Links\ResolverInterface;
+use Whitecube\Links\Exceptions\InvalidSerializedValue;
 
 class Archive implements ResolverInterface
 {
@@ -51,6 +53,14 @@ class Archive implements ResolverInterface
     }
 
     /**
+     * Get the eventual defined index URL resolver.
+     */
+    public function getIndex(): ?ArchiveIndexRoute
+    {
+        return $this->index;
+    }
+
+    /**
      * Define the archive's items URLs resolver.
      */
     public function items(Closure $setup): static
@@ -63,6 +73,14 @@ class Archive implements ResolverInterface
     }
 
     /**
+     * Get the eventual defined items URL resolver.
+     */
+    public function getItems(): ?ArchiveItemsRoute
+    {
+        return $this->items;
+    }
+
+    /**
      * Check if this resolver is suited for the provided key and return
      * itself or a more appropriate/specific resolver if available.
      */
@@ -72,6 +90,18 @@ class Archive implements ResolverInterface
             ?? $this->index?->for($key)
             ?? $this->items?->for($key)
             ?? null;
+    }
+    
+    /**
+     * Instantiate a Link object based on provided serialized value.
+     */
+    public function resolve(array $value, bool $silent): ?Link
+    {
+        if(! $silent) {
+            throw InvalidSerializedValue::ambiguousArchiveResolver($this, $value['resolver'] ?? $this->key);
+        }
+
+        return null;
     }
 
     /**
@@ -102,13 +132,5 @@ class Archive implements ResolverInterface
         }
 
         $panel->archive($this->items->toOption());
-    }
-
-    /**
-     * Generate the effective URL.
-     */
-    public function resolve(array $arguments = []): string
-    {
-        return '#'; // TODO
     }
 }

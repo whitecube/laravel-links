@@ -1,9 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\App;
+use Whitecube\Links\Manager;
 use Whitecube\Links\Option;
 use Whitecube\Links\OptionsArchive;
 use Whitecube\Links\OptionInterface;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,9 +43,20 @@ use Whitecube\Links\OptionInterface;
 |
 */
 
-function setupAppBindings()
+function setupAppBindings(?Manager $service = null): Manager
 {
-    App::swap(new class() {
+    $singleton = $service ?? new Manager;
+
+    App::swap(new class($singleton) {
+        public function __construct(protected ?Manager $singleton) {}
+
+        public function make($classname) {
+            return match ($classname) {
+                Manager::class => $this->singleton,
+                default => null,
+            };
+        }
+
         public function makeWith(string $classname, array $arguments = []) {
             return match ($classname) {
                 OptionInterface::class => new Option(...$arguments),
@@ -52,4 +65,14 @@ function setupAppBindings()
             };
         }
     });
+
+    return $singleton;
+}
+
+function setupRoute(string $name, array $arguments = []): void
+{   
+    URL::shouldReceive('route')
+        ->once()
+        ->with($name, $arguments)
+        ->andReturn('https://foo.bar/testing-route');
 }

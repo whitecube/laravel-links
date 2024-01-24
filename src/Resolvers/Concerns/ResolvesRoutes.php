@@ -52,9 +52,9 @@ trait ResolvesRoutes
     }
 
     /**
-     * Generate the effective URL.
+     * Generate the route's effective URL.
      */
-    public function resolve(array $arguments = []): string
+    protected function generateUrl(array $arguments = []): string
     {
         return URL::route($this->getRouteName(), array_merge(
             $this->getRouteArguments(),

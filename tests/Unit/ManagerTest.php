@@ -1,6 +1,7 @@
 <?php
 
 use Whitecube\Links\Manager;
+use Whitecube\Links\Link;
 use Whitecube\Links\OptionInterface;
 use Whitecube\Links\OptionsCollection;
 use Whitecube\Links\OptionsCollectionBuilder;
@@ -36,8 +37,8 @@ it('can register macros', function () {
         $resolver = new class ($name) implements ResolverInterface {
             public function __construct(public string $key) {}
             public function for(string $key): ?ResolverInterface { return ($key === $this->key) ? $this : null; }
+            public function resolve(array $value, bool $silent): ?Link { return null; }
             public function toOption(): null|OptionInterface|OptionsCollection { return null; }
-            public function resolve(array $arguments = []): string { return '#'; }
         };
         $this->register($resolver);
         return $resolver;

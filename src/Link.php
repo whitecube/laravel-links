@@ -2,45 +2,45 @@
 
 namespace Whitecube\Links;
 
+use Illuminate\Support\Facades\App;
 use Whitecube\Links\Exceptions\InvalidSerializedValue;
 
 class Link
 {
     /**
-     * The URL resolver's identification key.
+     * The resolved URL.
      */
-    protected string $key;
+    public readonly string $url;
 
     /**
-     * The represented resource's immutable identifier.
+     * The eventual extra provided arguments.
      */
-    protected null|int|string $id;
+    protected array $arguments;
 
     /**
-     * The default displayable title.
+     * The defined title attribute for this link.
      */
-    protected string $title;
+    protected ?string $title;
 
     /**
-     * The eventual extra arguments for the URL resolver.
+     * The resolver used to create this link.
      */
-    protected array $arguments = [];
+    protected ResolverInterface $resolver;
+
+    /**
+     * The eventual variant represented by this link.
+     */
+    protected ?Variant $variant;
 
     /**
      * Create a new Link instance.
      */
-    public function __construct(string $key, null|int|string $id = null)
+    public function __construct(string $url, ResolverInterface $resolver, ?Variant $variant = null, array $arguments = [])
     {
-        $this->key = $key;
-        $this->id = $id;
-    }
-
-    /**
-     * Create a new Link instance dynamically.
-     */
-    public static function make(string $key, null|int|string $id = null): static
-    {
-        return new static($key, $id);
+        $this->url = $url;
+        $this->resolver = $resolver;
+        $this->variant = $variant;
+        $this->arguments = $arguments;
     }
 
     /**
@@ -48,16 +48,7 @@ class Link
      */
     public static function fromArray(array $value): static
     {
-        if(! isset($value['key'])) {
-            return InvalidSerializedValue::forArray();
-        }
-
-        $instance = static::make($value['key'], $value['id'] ?? null);
-
-        unset($value['key']);
-        unset($value['id']);
-
-        return $instance->arguments($value);
+        return App::make(Manager::class)->resolve($value);
     }
 
     /**
@@ -68,7 +59,7 @@ class Link
         preg_match('/^\\@link\\((.+?)\\)$/', trim($value), $matches);
 
         if(! ($matches[1] ?? null)) {
-            return InvalidSerializedValue::forInlineTag($value);
+            throw InvalidSerializedValue::inlineTagSyntax($value);
         }
 
         $data = array_reduce(explode(',', $matches[1]), function ($data, $pair) {
@@ -82,19 +73,11 @@ class Link
     }
 
     /**
-     * Get the link's resolver identifying key
-     */
-    public function getResolverKey(): string
-    {
-        return $this->key;
-    }
-
-    /**
      * Define the link's default displayable title.
      */
     public function title(string $title): static
     {
-        $this->title = $title;
+        $this->title = trim($title) ?: null;
 
         return $this;
     }
@@ -104,7 +87,7 @@ class Link
      */
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? $this->resolver->getTitle($this->variant);
     }
 
     /**
@@ -136,10 +119,11 @@ class Link
      */
     public function toArray(): array
     {
-        return array_filter(array_merge([
-            'key' => $this->key,
-            'id' => $this->id,
-        ], $this->arguments));
+        return array_filter([
+            'resolver' => $this->resolver->key,
+            'variant' => $this->variant?->getKey(),
+            'data' => $this->arguments ?: null,
+        ]);
     }
 
     /**

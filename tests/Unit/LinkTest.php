@@ -1,50 +1,106 @@
 <?php
 
 use Whitecube\Links\Link;
+use Whitecube\Links\Manager;
+use Whitecube\Links\Exceptions\InvalidSerializedValue;
 
-it('can hydrate from array and serialize to array', function () {
-    $data = [
-        'key' => 'bar',
-        'id' => 'foo',
-        'test' => 'something',
-    ];
+expect()->extend('toBeWorkingLinkInstanceFor', function ($format, $target) {
+    $this->toBeInstanceOf(Link::class);
+    expect($this->value->getTitle())->toBe('Bar');
 
-    $link = Link::fromArray($data);
-
-    expect($link)->toBeInstanceOf(Link::class);
-
-    $result = $link->toArray();
-
-    expect($result)->toBeArray();
-    expect($result)->toMatchArray($data);
+    if($format === 'array') {
+        $serialized = $this->value->toArray();
+        expect($serialized)->toBeArray();
+        expect($serialized)->toMatchArray($target);
+    } else if ($format === 'tag') {
+        $tag = $link->toInlineTag();
+        expect($tag)->toBe($target);
+    }
 });
 
-it('can hydrate from array without ID and serialize to array without ID', function () {
+it('can hydrate from array and serialize to array only using resolver key', function () {
+    $service = setupAppBindings();
+    setupRoute('foo');
+
+    $service->route('foo')->title('Bar');
+
     $data = [
-        'key' => 'bar',
-        'test' => 'something',
+        'resolver' => 'foo',
     ];
 
-    $link = Link::fromArray($data);
+    expect(Link::fromArray($data))->toBeWorkingLinkInstanceFor('array', $data);
+})->only();
 
-    expect($link)->toBeInstanceOf(Link::class);
+it('cannot resolve array with missing resolver', function () {
+    $service = setupAppBindings();
 
-    $result = $link->toArray();
+    $service->route('foo')->title('bar');
 
-    expect($result)->toBeArray();
-    expect($result)->toMatchArray($data);
+    $data = [
+        'key' => 'foo',
+    ];
+
+    Link::fromArray($data);
+})->throws(InvalidSerializedValue::class, 'Provided serialized link value should at least contain a "resolver" attribute.');
+
+it('can hydrate from array and serialize to array using resolver and variant keys', function () {
+    setupAppBindings();
+
+    $data = [
+        'resolver' => 'foo.item',
+        'variant' => 'bar',
+    ];
+
+    expect(Link::fromArray($data))->toBeWorkingLinkInstanceFor('array', $data);
+});
+
+it('cannot resolve archive resolver directly', function () {
+    $service = setupAppBindings();
+
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('bar'))
+        ->items(fn($entry) => $entry->route('bar')->collect([]));
+
+    $data = [
+        'resolver' => 'foo',
+    ];
+
+    Link::fromArray($data);
+})->throws(InvalidSerializedValue::class, 'Provided serialized link value is targetting an ambiguous archive resolver (available: "foo.index", "foo.item", got "foo").');
+
+it('can hydrate from array and serialize to array using resolver key plus extra arguments', function () {
+    setupAppBindings();
+
+    $data = [
+        'resolver' => 'foo',
+        'data' => [
+            'test' => 'something',
+        ],
+    ];
+
+    expect(Link::fromArray($data))->toBeWorkingLinkInstanceFor('array', $data);
+});
+
+it('can hydrate from array and serialize to array using resolver and variant keys plus extra arguments', function () {
+    setupAppBindings();
+    
+    $data = [
+        'resolver' => 'foo.item',
+        'variant' => 'bar',
+        'data' => [
+            'test' => 'something',
+        ],
+    ];
+
+    expect(Link::fromArray($data))->toBeWorkingLinkInstanceFor('array', $data);
 });
 
 it('can hydrate from inline tag and serialize to inline tag', function () {
-    $tag = '@link(key:foo,id:bar,test:1,value:something)';
+    setupAppBindings();
+    
+    $tag = "@link('foo@bar',['test'=>'something'])";
 
-    $link = Link::fromInlineTag($tag);
-
-    expect($link)->toBeInstanceOf(Link::class);
-
-    $result = $link->toInlineTag();
-
-    expect($result)->toBe($tag);
+    expect(Link::fromInlineTag($tag))->toBeWorkingLinkInstanceFor('tag', $tag);
 });
 
 it('can define extra arguments and remove null arguments', function () {

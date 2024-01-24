@@ -4,7 +4,6 @@ use Whitecube\Links\Manager;
 use Whitecube\Links\Resolvers\Route;
 use Whitecube\Links\Resolvers\Archive;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Contracts\Support\Arrayable;
 use Whitecube\Links\Tests\Fixtures\FakeModel;
 
@@ -80,10 +79,7 @@ it('can register named route with default route parameters and specific title', 
 });
 
 it('can resolve simple defined route', function () {
-    URL::shouldReceive('route')
-        ->once()
-        ->with('foo', [])
-        ->andReturn('https://foo.bar/testing-route');
+    setupRoute('foo');
 
     $resolver = (new Route('some-key'))->route('foo');
 
@@ -91,10 +87,7 @@ it('can resolve simple defined route', function () {
 });
 
 it('can resolve defined route with arguments', function () {
-    URL::shouldReceive('route')
-        ->once()
-        ->with('foo', ['bar' => 'test', 'foo' => 'bar'])
-        ->andReturn('https://foo.bar/testing-route');
+    setupRoute('foo', ['bar' => 'test', 'foo' => 'bar']);
 
     $resolver = (new Route('some-key'))->route('foo', ['bar' => 'overwritten', 'foo' => 'bar']);
 

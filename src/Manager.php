@@ -6,6 +6,7 @@ use Illuminate\Support\Traits\Macroable;
 use Whitecube\Links\Resolvers\Route;
 use Whitecube\Links\Resolvers\Archive;
 use Whitecube\Links\Exceptions\ResolverNotFound;
+use Whitecube\Links\Exceptions\InvalidSerializedValue;
 
 class Manager
 {
@@ -48,6 +49,26 @@ class Manager
         $this->repository->register($resolver);
 
         return $resolver;
+    }
+
+    /**
+     * Transform a serialized link value into a proper resolved Link instance.
+     */
+    public function resolve(array $value, bool $silent = false): ?Link
+    {
+        if(! isset($value['resolver'])) {
+            throw InvalidSerializedValue::missingResolver();
+        }
+
+        $resolver = ($silent)
+            ? $this->tryFor($value['resolver'])
+            : $this->for($value['resolver']);
+
+        if(! $resolver) {
+            return null;
+        }
+
+        return $resolver->resolve($value, $silent);
     }
 
     /**

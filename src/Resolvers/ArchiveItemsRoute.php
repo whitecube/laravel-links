@@ -2,6 +2,7 @@
 
 namespace Whitecube\Links\Resolvers;
 
+use Whitecube\Links\Link;
 use Whitecube\Links\OptionInterface;
 use Whitecube\Links\OptionsCollection;
 use Whitecube\Links\ResolverInterface;
@@ -32,6 +33,14 @@ class ArchiveItemsRoute implements ResolverInterface
     public function for(string $key): ?ResolverInterface
     {
         return ($this->key === $key) ? $this : null;
+    }
+
+    /**
+     * Instantiate a Link object based on provided serialized value.
+     */
+    public function resolve(array $value, bool $silent): ?Link
+    {
+        return null;
     }
 
     /**
