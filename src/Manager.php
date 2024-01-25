@@ -28,9 +28,9 @@ class Manager
     /**
      * Register a new Route URL resolver.
      */
-    public function route(string $name, array $arguments = []): ResolverInterface
+    public function route(string $name, array $parameters = []): ResolverInterface
     {
-        return $this->register((new Route($name))->route($name, $arguments));
+        return $this->register((new Route($name))->route($name, $parameters));
     }
 
     /**
