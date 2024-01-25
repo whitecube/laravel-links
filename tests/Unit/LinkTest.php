@@ -291,10 +291,13 @@ it('can hydrate from inline tag and serialize to inline tag using archive item r
 });
 
 it('can define a displayable title', function () {
-    $link = new Link('foo','bar');
+    $service = setupAppBindings();
+    setupRoute('foo');
 
-    expect($link->title('This is a testing title'))->toBe($link);
-    expect($link->getTitle())->toBe('This is a testing title');
-
-    expect($link->toArray()['title'] ?? null)->toBeNull();
+    $resolver = $service->route('foo')->title('default');
+    $link = $resolver->resolve([], false);
+    
+    expect($link->getTitle())->toBe('default');
+    expect($link->title('new title'))->toBe($link);
+    expect($link->getTitle())->toBe('new title');
 });
