@@ -20,7 +20,19 @@ expect()->extend('toBeWorkingLinkInstanceFor', function ($format, $target) {
     }
 });
 
-it('can hydrate from array and serialize to array only using route resolver key', function () {
+it('cannot resolve array with missing resolver', function () {
+    $service = setupAppBindings();
+
+    $service->route('foo')->title('bar');
+
+    $data = [
+        'key' => 'foo',
+    ];
+
+    Link::fromArray($data);
+})->throws(InvalidSerializedValue::class, 'Provided serialized link value should have a "resolver" attribute.');
+
+it('can hydrate from array and serialize to array using route resolver', function () {
     $service = setupAppBindings();
     setupRoute('foo');
 
@@ -36,17 +48,19 @@ it('can hydrate from array and serialize to array only using route resolver key'
     expect($link->getTitle())->toBe('Bar');
 });
 
-it('cannot resolve array with missing resolver', function () {
+it('cannot resolve archive resolver directly', function () {
     $service = setupAppBindings();
 
-    $service->route('foo')->title('bar');
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('bar'))
+        ->items(fn($entry) => $entry->route('bar')->collect([]));
 
     $data = [
-        'key' => 'foo',
+        'resolver' => 'foo',
     ];
 
     Link::fromArray($data);
-})->throws(InvalidSerializedValue::class, 'Provided serialized link value should have a "resolver" attribute.');
+})->throws(InvalidSerializedValue::class, 'Provided serialized link value is targetting an ambiguous archive resolver (available: "foo.index", "foo.item", got "foo").');
 
 it('can hydrate from array and serialize to array using archive index resolver', function () {
     $service = setupAppBindings();
@@ -54,13 +68,7 @@ it('can hydrate from array and serialize to array using archive index resolver',
 
     $service->archive('foo')
         ->index(fn($entry) => $entry->route('index')->title('Foo index'))
-        ->items(function($entry) {
-            $entry->route('item')
-                ->collect(FakeModel::$items)
-                ->keyBy('id')
-                ->parameter('slug', fn($variant) => $variant->slug)
-                ->title(fn($variant) => $variant->title);
-        });
+        ->items(fn($entry) => $entry->route('bar')->collect([]));
 
     $data = [
         'resolver' => 'foo.index',
@@ -70,31 +78,6 @@ it('can hydrate from array and serialize to array using archive index resolver',
 
     expect($link)->toBeWorkingLinkInstanceFor('array', $data);
     expect($link->getTitle())->toBe('Foo index');
-});
-
-it('can hydrate from array and serialize to array using archive item resolver with variant key', function () {
-    $service = setupAppBindings();
-    setupRoute('item', ['slug' => 'two']);
-
-    $service->archive('foo')
-        ->index(fn($entry) => $entry->route('index'))
-        ->items(function($entry) {
-            $entry->route('item')
-                ->collect(FakeModel::$items)
-                ->keyBy('id')
-                ->parameter('slug', fn($variant) => $variant->slug)
-                ->title(fn($variant) => $variant->title);
-        });
-
-    $data = [
-        'resolver' => 'foo.item',
-        'variant' => '2',
-    ];
-
-    $link = Link::fromArray($data);
-
-    expect($link)->toBeWorkingLinkInstanceFor('array', $data);
-    expect($link->getTitle())->toBe('Post Two');
 });
 
 it('cannot resolve array for archive item resolver without variant key', function () {
@@ -122,19 +105,30 @@ it('cannot resolve array for archive item resolver with unknown variant key', fu
     Link::fromArray($data);
 })->throws(VariantNotFound::class, 'Variant for key "test" could not be found.');
 
-it('cannot resolve archive resolver directly', function () {
+it('can hydrate from array and serialize to array using archive item resolver with variant key', function () {
     $service = setupAppBindings();
+    setupRoute('item', ['slug' => 'two']);
 
     $service->archive('foo')
-        ->index(fn($entry) => $entry->route('bar'))
-        ->items(fn($entry) => $entry->route('bar')->collect([]));
+        ->index(fn($entry) => $entry->route('index'))
+        ->items(function($entry) {
+            $entry->route('item')
+                ->collect(FakeModel::$items)
+                ->keyBy('id')
+                ->parameter('slug', fn($variant) => $variant->slug)
+                ->title(fn($variant) => $variant->title);
+        });
 
     $data = [
-        'resolver' => 'foo',
+        'resolver' => 'foo.item',
+        'variant' => '2',
     ];
 
-    Link::fromArray($data);
-})->throws(InvalidSerializedValue::class, 'Provided serialized link value is targetting an ambiguous archive resolver (available: "foo.index", "foo.item", got "foo").');
+    $link = Link::fromArray($data);
+
+    expect($link)->toBeWorkingLinkInstanceFor('array', $data);
+    expect($link->getTitle())->toBe('Post Two');
+});
 
 it('can hydrate from array and serialize to array using resolver key plus extra arguments', function () {
     setupAppBindings();
