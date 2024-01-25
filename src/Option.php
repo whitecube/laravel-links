@@ -61,13 +61,10 @@ class Option implements OptionInterface
      */
     public function getKey(): string
     {
-        $key = $this->getResolverKey();
-
-        if($variant = $this->getVariantKey()) {
-            $key .= '@'.$variant;
-        }
-
-        return $key;
+        return Link::formatKey(
+            $this->getResolverKey(),
+            $this->getVariantKey(),
+        );
     }
 
     /**

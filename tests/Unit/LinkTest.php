@@ -14,8 +14,11 @@ expect()->extend('toBeWorkingLinkInstanceFor', function ($format, $target) {
         $serialized = $this->value->toArray();
         expect($serialized)->toBeArray();
         expect($serialized)->toMatchArray($target);
+    } else if ($format === 'key') {
+        $key = $this->value->toKey();
+        expect($key)->toBe($target);
     } else if ($format === 'tag') {
-        $tag = $link->toInlineTag();
+        $tag = $this->value->toInlineTag();
         expect($tag)->toBe($target);
     }
 });
@@ -23,7 +26,7 @@ expect()->extend('toBeWorkingLinkInstanceFor', function ($format, $target) {
 it('cannot resolve array with missing resolver', function () {
     $service = setupAppBindings();
 
-    $service->route('foo')->title('bar');
+    $service->route('foo');
 
     $data = [
         'key' => 'foo',
@@ -174,10 +177,115 @@ it('can hydrate from array and serialize to array using archive item resolver wi
     expect($link)->toBeWorkingLinkInstanceFor('array', $data);
 });
 
-it('can hydrate from inline tag and serialize to inline tag', function () {
-    setupAppBindings();
+it('can hydrate from key and serialize to key using route resolver', function () {
+    $service = setupAppBindings();
+    setupRoute('foo');
+
+    $service->route('foo');
     
-    $tag = "@link('foo@bar',['test'=>'something'])";
+    $key = 'foo';
+
+    expect(Link::fromKey($key))->toBeWorkingLinkInstanceFor('key', $key);
+});
+
+it('can hydrate from key and serialize to key using archive index resolver', function () {
+    $service = setupAppBindings();
+    setupRoute('index');
+
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('index'))
+        ->items(fn($entry) => $entry->route('bar')->collect([]));
+    
+    $key = 'foo.index';
+
+    expect(Link::fromKey($key))->toBeWorkingLinkInstanceFor('key', $key);
+});
+
+it('can hydrate from key and serialize to key using archive item resolver', function () {
+    $service = setupAppBindings();
+    setupRoute('item', ['slug' => 'one']);
+
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('index'))
+        ->items(function($entry) {
+            $entry->route('item')
+                ->collect(FakeModel::$items)
+                ->keyBy('id')
+                ->parameter('slug', fn($variant) => $variant->slug);
+        });
+    
+    $key = 'foo.item@1';
+
+    expect(Link::fromKey($key))->toBeWorkingLinkInstanceFor('key', $key);
+});
+
+it('can hydrate from inline tag and serialize to inline tag using route resolver', function () {
+    $service = setupAppBindings();
+    setupRoute('foo');
+
+    $service->route('foo');
+    
+    $tag = '#link[foo]';
+
+    expect(Link::fromInlineTag($tag))->toBeWorkingLinkInstanceFor('tag', $tag);
+});
+
+it('can hydrate from inline tag and serialize to inline tag using route resolver plus extra arguments', function () {
+    $service = setupAppBindings();
+    setupRoute('foo', ['test' => 'true', 'value' => 'string: spaces, commas & other punctuation;']);
+
+    $service->route('foo');
+    
+    $tag = '#link[foo,test:true,value:"string: spaces, commas & other punctuation;"]';
+
+    expect(Link::fromInlineTag($tag))->toBeWorkingLinkInstanceFor('tag', $tag);
+});
+
+it('can hydrate from inline tag and serialize to inline tag using archive index resolver', function () {
+    $service = setupAppBindings();
+    setupRoute('index');
+
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('index'))
+        ->items(fn($entry) => $entry->route('bar')->collect([]));
+    
+    $tag = '#link[foo.index]';
+
+    expect(Link::fromInlineTag($tag))->toBeWorkingLinkInstanceFor('tag', $tag);
+});
+
+it('can hydrate from inline tag and serialize to inline tag using archive item resolver', function () {
+    $service = setupAppBindings();
+    setupRoute('item', ['slug' => 'one']);
+
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('index'))
+        ->items(function($entry) {
+            $entry->route('item')
+                ->collect(FakeModel::$items)
+                ->keyBy('id')
+                ->parameter('slug', fn($variant) => $variant->slug);
+        });
+    
+    $tag = '#link[foo.item@1]';
+
+    expect(Link::fromInlineTag($tag))->toBeWorkingLinkInstanceFor('tag', $tag);
+});
+
+it('can hydrate from inline tag and serialize to inline tag using archive item resolver plus extra arguments', function () {
+    $service = setupAppBindings();
+    setupRoute('item', ['slug' => 'one', 'test' => 'true', 'value' => 'string: spaces, commas & other punctuation;']);
+
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('index'))
+        ->items(function($entry) {
+            $entry->route('item')
+                ->collect(FakeModel::$items)
+                ->keyBy('id')
+                ->parameter('slug', fn($variant) => $variant->slug);
+        });
+    
+    $tag = '#link[foo.item@1,test:true,value:"string: spaces, commas & other punctuation;"]';
 
     expect(Link::fromInlineTag($tag))->toBeWorkingLinkInstanceFor('tag', $tag);
 });

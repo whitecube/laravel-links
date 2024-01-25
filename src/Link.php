@@ -60,24 +60,131 @@ class Link
     }
 
     /**
+     * Create a link instance from compiled resolver/variant string.
+     */
+    public static function fromKey(string $key): static
+    {
+        return static::fromArray(static::parseKey($key));
+    }
+
+    /**
+     * Compile a resolver/variant pair string.
+     */
+    public static function formatKey(string $resolver, null|int|string $variant = null): string
+    {
+        return (! is_null($variant))
+            ? $resolver.'@'.$variant
+            : $resolver;
+    }
+
+    /**
+     * Decompile a resolver/variant pair string.
+     */
+    public static function parseKey(string $key): array
+    {
+        $parts = explode('@', $key);
+
+        return [
+            'resolver' => $parts[0],
+            'variant' => $parts[1] ?? null,
+        ];
+    }
+
+    /**
+     * Compile a data (or "arguments", "parameters") string
+     */
+    public static function formatDataString(array $data): string
+    {
+        return implode(',', array_map(function($attribute, $value) {
+            return static::quoteDataString($attribute).':'.static::quoteDataString(strval($value));
+        }, array_keys($data), array_values($data)));
+    }
+
+    /**
+     * Compile a data (or "arguments", "parameters") string
+     */
+    public static function quoteDataString(string $chunk): string
+    {
+        $triggers = [' ', '"', '\'', ','];
+
+        foreach ($triggers as $trigger) {
+            if(strpos($chunk, $trigger) === false) continue;
+            return '"'.str_replace(['"','\''], ['\\"','\\\''], $chunk).'"';
+        }
+
+        return $chunk;
+    }
+
+    /**
+     * Decompile a data (or "arguments", "parameters") string
+     */
+    public static function parseDataSring(string $data): array
+    {
+        $chunks = [];
+        $chunk = '';
+        $quoted = false;
+
+        while(strlen($data)) {
+            $char = substr($data, 0, 1);
+            $data = substr($data, 1);
+
+            if($char === '"') {
+                $quoted = !$quoted;
+            } elseif ($char === ',' && ! $quoted) {
+                $chunks[] = $chunk;
+                $chunk = '';
+            } else {
+                $chunk .= ($char === ':' && $quoted) ? '#__COLUMN__#' : $char;
+            }
+
+            if(! strlen($data) && strlen($chunk)) {
+                $chunks[] = $chunk;
+            }
+        }
+
+        return array_reduce($chunks, function($attributes, $chunk) {
+            [$key, $value] = array_slice(array_pad(explode(':', $chunk), 2, null), 0, 2);
+            $attributes[$key] = str_replace('#__COLUMN__#',':',$value);
+            return $attributes;
+        }, []);
+    }
+
+    /**
      * Create a link instance from an inline tag (string).
      */
     public static function fromInlineTag(string $value): static
     {
-        preg_match('/^\\@link\\((.+?)\\)$/', trim($value), $matches);
+        preg_match('/^\\#link\[(.+?)(?:\\,(.+))?\\]$/', trim($value), $matches);
+        $parts = array_combine(['full','key','data'], array_pad($matches, 3, null));
 
-        if(! ($matches[1] ?? null)) {
+        if(is_null($parts['full']) || ! $parts['key']) {
             throw InvalidSerializedValue::inlineTagSyntax($value);
         }
 
-        $data = array_reduce(explode(',', $matches[1]), function ($data, $pair) {
-            $pair = explode(':', $pair);
-            if(! isset($pair[0]) || ! isset($pair[1])) return $data;
-            $data[$pair[0]] = $pair[1];
-            return $data;
-        }, []);
+        $unserialized = static::parseKey($parts['key']);
 
-        return static::fromArray($data);
+        if($parts['data']) {
+            $unserialized['data'] = static::parseDataSring($parts['data']);
+        }
+
+        return static::fromArray($unserialized);
+    }
+
+    /**
+     * Compile a resolver/variant pair string.
+     */
+    public static function formatInlineTag(string $resolver, null|int|string $variant = null, array $data = []): string
+    {
+        $tag = '#link[';
+        $tag .= static::formatKey($resolver, $variant);
+
+        if($data) {
+            $tag .= ','.static::formatDataString($data);
+        }
+
+        $tag .= ']';
+
+        return $tag;
     }
 
     /**
@@ -111,16 +218,25 @@ class Link
     }
 
     /**
-     * Transform this link into a parsable pseudo-Blade tag.
+     * Transform this link into a parsable resolver/variant key pair.
+     */
+    public function toKey(): string
+    {
+        return static::formatKey(
+            $this->resolver->key,
+            $this->variant?->getKey(),
+        );
+    }
+
+    /**
+     * Transform this link into a parsable inline tag.
      */
     public function toInlineTag(): string
     {
-        $arguments = $this->toArray();
-
-        $tag = '@link(';
-        $tag .= implode(',', array_map(fn($key, $value) => $key.':'.$value, array_keys($arguments), array_values($arguments)));
-        $tag .= ')';
-
-        return $tag;
+        return static::formatInlineTag(
+            $this->resolver->key,
+            $this->variant?->getKey(),
+            $this->data,
+        );
     }
 }
