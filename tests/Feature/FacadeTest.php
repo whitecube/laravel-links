@@ -10,4 +10,4 @@ it('transfers method calls to the links manager', function() {
     $resolver = app(Manager::class)->for('foo');
 
     expect($resolver)->toBeInstanceOf(ResolverInterface::class);
-})->only();
+});

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Category;
+use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +17,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
+
+Route::get('/blog', function (Category $category) {
+    return view('welcome');
+})->name('posts.index');
+
+Route::get('/blog/{category}', function (Category $category) {
+    return view('welcome');
+})->name('posts.category');
+
+Route::get('/blog/{category}/{post}', function (Category $category, Post $post) {
+    return view('welcome');
+})->name('posts.item');
