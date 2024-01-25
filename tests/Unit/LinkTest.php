@@ -48,6 +48,24 @@ it('can hydrate from array and serialize to array using route resolver', functio
     expect($link->getTitle())->toBe('Bar');
 });
 
+it('can hydrate from array and serialize to array using route resolver plus extra arguments', function () {
+    $service = setupAppBindings();
+    setupRoute('foo', ['test' => 'something']);
+
+    $service->route('foo');
+
+    $data = [
+        'resolver' => 'foo',
+        'data' => [
+            'test' => 'something',
+        ],
+    ];
+
+    $link = Link::fromArray($data);
+
+    expect($link)->toBeWorkingLinkInstanceFor('array', $data);
+});
+
 it('cannot resolve archive resolver directly', function () {
     $service = setupAppBindings();
 
@@ -130,31 +148,30 @@ it('can hydrate from array and serialize to array using archive item resolver wi
     expect($link->getTitle())->toBe('Post Two');
 });
 
-it('can hydrate from array and serialize to array using resolver key plus extra arguments', function () {
-    setupAppBindings();
+it('can hydrate from array and serialize to array using archive item resolver with variant key plus extra arguments', function () {
+    $service = setupAppBindings();
+    setupRoute('item', ['slug' => 'three', 'test' => 'something']);
 
-    $data = [
-        'resolver' => 'foo',
-        'data' => [
-            'test' => 'something',
-        ],
-    ];
-
-    expect(Link::fromArray($data))->toBeWorkingLinkInstanceFor('array', $data);
-});
-
-it('can hydrate from array and serialize to array using resolver and variant keys plus extra arguments', function () {
-    setupAppBindings();
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('index'))
+        ->items(function($entry) {
+            $entry->route('item')
+                ->collect(FakeModel::$items)
+                ->keyBy('id')
+                ->parameter('slug', fn($variant) => $variant->slug);
+        });
     
     $data = [
         'resolver' => 'foo.item',
-        'variant' => 'bar',
+        'variant' => '3',
         'data' => [
             'test' => 'something',
         ],
     ];
 
-    expect(Link::fromArray($data))->toBeWorkingLinkInstanceFor('array', $data);
+    $link = Link::fromArray($data);
+
+    expect($link)->toBeWorkingLinkInstanceFor('array', $data);
 });
 
 it('can hydrate from inline tag and serialize to inline tag', function () {
