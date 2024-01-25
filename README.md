@@ -1,8 +1,8 @@
 # Links for Laravel
 
-> 🔗 No more broken internal links!
-> ♻️ Changes made to route structures, model bindings, slugs, etc. are directly transposed to all URLs generated with this package ;
-> 🎯 Display intuitive and exhaustive form fields for links selection ;
+> 🔗 No more broken internal links!  
+> ♻️ Changes made to route structures, model bindings, slugs, etc. are directly transposed to all URLs generated with this package ;  
+> 🎯 Display intuitive and exhaustive form fields for links selection ;  
 > 💾 Store references to simple or complex URLs where and how you want.
 
 Laravel's routing system is great. With this package, it will become even greater! Using a simple link reference syntax, you'll be able to store and parse URLs on-the-fly and take full advantage of Laravel's routing in rich content and other stored data structures.
