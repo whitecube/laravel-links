@@ -3,6 +3,7 @@
 use Whitecube\Links\Link;
 use Whitecube\Links\Manager;
 use Whitecube\Links\Exceptions\InvalidSerializedValue;
+use Whitecube\Links\Tests\Fixtures\FakeModel;
 
 expect()->extend('toBeWorkingLinkInstanceFor', function ($format, $target) {
     $this->toBeInstanceOf(Link::class);
@@ -29,7 +30,7 @@ it('can hydrate from array and serialize to array only using resolver key', func
     ];
 
     expect(Link::fromArray($data))->toBeWorkingLinkInstanceFor('array', $data);
-})->only();
+});
 
 it('cannot resolve array with missing resolver', function () {
     $service = setupAppBindings();
@@ -44,11 +45,21 @@ it('cannot resolve array with missing resolver', function () {
 })->throws(InvalidSerializedValue::class, 'Provided serialized link value should at least contain a "resolver" attribute.');
 
 it('can hydrate from array and serialize to array using resolver and variant keys', function () {
-    setupAppBindings();
+    $service = setupAppBindings();
+    setupRoute('item', ['slug' => 'two']);
+
+    $service->archive('foo')
+        ->index(fn($entry) => $entry->route('index'))
+        ->items(function($entry) {
+            $entry->route('item')
+                ->collect(FakeModel::$items)
+                ->keyBy('id')
+                ->parameter('slug', fn($variant) => $variant->slug);
+        });
 
     $data = [
         'resolver' => 'foo.item',
-        'variant' => 'bar',
+        'variant' => '2',
     ];
 
     expect(Link::fromArray($data))->toBeWorkingLinkInstanceFor('array', $data);
@@ -101,27 +112,6 @@ it('can hydrate from inline tag and serialize to inline tag', function () {
     $tag = "@link('foo@bar',['test'=>'something'])";
 
     expect(Link::fromInlineTag($tag))->toBeWorkingLinkInstanceFor('tag', $tag);
-});
-
-it('can define extra arguments and remove null arguments', function () {
-    $link = new Link('foo','bar');
-
-    expect($link->arguments(['test1' => 'value1', 'test2' => 'value2', 'test3' => null]))->toBe($link);
-    expect($link->argument('test4', 'value4'))->toBe($link);
-    $link->argument('test2', 'new2');
-    $link->argument('test5', null);
-    $link->argument('test6', 'value6');
-    $link->arguments(['test4' => 'new4', 'test7' => 'value7']);
-
-    expect($link->toArray())->toMatchArray([
-        'key' => 'foo',
-        'id' => 'bar',
-        'test1' => 'value1',
-        'test2' => 'new2',
-        'test4' => 'new4',
-        'test6' => 'value6',
-        'test7' => 'value7',
-    ]);
 });
 
 it('can define a displayable title', function () {

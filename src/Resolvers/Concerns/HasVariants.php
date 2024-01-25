@@ -108,7 +108,7 @@ trait HasVariants
     /**
      * Retrieve all variants from the current variants repository.
      */
-    protected function getAllVariants(): array
+    public function getAllVariants(): array
     {
         if(! $this->variants) {
             return [];

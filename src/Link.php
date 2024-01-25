@@ -15,7 +15,7 @@ class Link
     /**
      * The eventual extra provided arguments.
      */
-    protected array $arguments;
+    protected array $data;
 
     /**
      * The defined title attribute for this link.
@@ -35,12 +35,12 @@ class Link
     /**
      * Create a new Link instance.
      */
-    public function __construct(string $url, ResolverInterface $resolver, ?Variant $variant = null, array $arguments = [])
+    public function __construct(string $url, ResolverInterface $resolver, ?Variant $variant = null, array $data = [])
     {
         $this->url = $url;
         $this->resolver = $resolver;
         $this->variant = $variant;
-        $this->arguments = $arguments;
+        $this->data = $data;
     }
 
     /**
@@ -91,30 +91,6 @@ class Link
     }
 
     /**
-     * Define eventual extra arguments for the link's URL resolver. Arguments
-     * need to be "stringable" values for serialization.
-     */
-    public function arguments(array $arguments): static
-    {
-        foreach($arguments as $attribute => $value) {
-            $this->argument($attribute, $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Define a single extra argument for the link's URL resolver. Provided value
-     * should be "stringable" values for serialization.
-     */
-    public function argument(string $attribute, mixed $value): static
-    {
-        $this->arguments[$attribute] = is_null($value) ? null : strval($value);
-
-        return $this;
-    }
-
-    /**
      * Transform this link into a parsable pseudo-Blade tag.
      */
     public function toArray(): array
@@ -122,7 +98,7 @@ class Link
         return array_filter([
             'resolver' => $this->resolver->key,
             'variant' => $this->variant?->getKey(),
-            'data' => $this->arguments ?: null,
+            'data' => $this->data ?: null,
         ]);
     }
 

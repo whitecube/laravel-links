@@ -40,8 +40,8 @@ class Route implements ResolverInterface
     public function resolve(array $value, bool $silent): ?Link
     {
         return new Link(
-            url: $this->generateUrl($value['data'] ?? []),
-            arguments: $value['data'] ?? [],
+            url: $this->generateUrl(parameters: $value['data'] ?? []),
+            data: $value['data'] ?? [],
             resolver: $this,
         );
     }
