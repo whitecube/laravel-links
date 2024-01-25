@@ -20,7 +20,15 @@ class InvalidSerializedValue extends InvalidArgumentException
      */
     public static function missingResolver(): static
     {
-        return new self('Provided serialized link value should at least contain a "resolver" attribute.');
+        return new self('Provided serialized link value should have a "resolver" attribute.');
+    }
+
+    /**
+     * Create a new Exception for an invalid serialized array value because of a missing "resolver" key.
+     */
+    public static function missingVariant(): static
+    {
+        return new self('Provided serialized link value for archive item resolver should have a "variant" attribute.');
     }
 
     /**

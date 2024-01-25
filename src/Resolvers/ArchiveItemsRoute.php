@@ -6,6 +6,8 @@ use Whitecube\Links\Link;
 use Whitecube\Links\OptionInterface;
 use Whitecube\Links\OptionsCollection;
 use Whitecube\Links\ResolverInterface;
+use Whitecube\Links\Exceptions\VariantNotFound;
+use Whitecube\Links\Exceptions\InvalidSerializedValue;
 
 class ArchiveItemsRoute implements ResolverInterface
 {
@@ -40,7 +42,24 @@ class ArchiveItemsRoute implements ResolverInterface
      */
     public function resolve(array $value, bool $silent): ?Link
     {
-        return null;
+        if(! isset($value['variant'])) {
+            if($silent) return null;
+            throw InvalidSerializedValue::missingVariant();
+        }
+
+        $variant = $this->findVariant($value['variant']);
+
+        if(! $variant) {
+            if($silent) return null;
+            throw VariantNotFound::forKey($value['variant']);
+        }
+        
+        return new Link(
+            url: $this->generateUrl(variant: $variant, parameters: $value['data'] ?? []),
+            data: $value['data'] ?? [],
+            resolver: $this,
+            variant: $variant,
+        );
     }
 
     /**

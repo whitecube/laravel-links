@@ -44,6 +44,14 @@ class Link
     }
 
     /**
+     * Magically cast this instance to URL string.
+     */
+    public function __toString(): string
+    {
+        return $this->url;
+    }
+
+    /**
      * Create a link instance from serialized array.
      */
     public static function fromArray(array $value): static

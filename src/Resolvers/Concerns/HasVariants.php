@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Database\Query\Builder;
+use Whitecube\Links\Variant;
 use Whitecube\Links\VariantsRepositoryInterface;
 use Whitecube\Links\Variants\Query as VariantsQuery;
 use Whitecube\Links\Variants\Collection as VariantsCollection;
@@ -115,5 +116,17 @@ trait HasVariants
         }
 
         return $this->variants->all();
+    }
+
+    /**
+     * Retrieve all variants from the current variants repository.
+     */
+    public function findVariant(int|string $key): ?Variant
+    {
+        if(! $this->variants) {
+            return null;
+        }
+
+        return $this->variants->find($key);
     }
 }

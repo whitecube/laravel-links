@@ -15,4 +15,9 @@ interface VariantsRepositoryInterface
      * Return all available variants.
      */
     public function all(): array;
+    
+    /**
+     * Return a specific variant matching provided key.
+     */
+    public function find(int|string $key): ?Variant;
 }

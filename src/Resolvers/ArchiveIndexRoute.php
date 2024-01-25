@@ -39,7 +39,11 @@ class ArchiveIndexRoute implements ResolverInterface
      */
     public function resolve(array $value, bool $silent): ?Link
     {
-        return null;
+        return new Link(
+            url: $this->generateUrl(parameters: $value['data'] ?? []),
+            data: $value['data'] ?? [],
+            resolver: $this,
+        );
     }
 
     /**

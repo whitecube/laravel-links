@@ -41,11 +41,26 @@ class Query implements VariantsRepositoryInterface
     }
 
     /**
-     * Return the prepared query that should be executed.
+     * Return the prepared query that should be executed in order to list all variant results.
      */
-    protected function getExecutableQuery(): Builder
+    protected function getExecutableIndexQuery(): Builder
     {
         return $this->query;
+    }
+
+    /**
+     * Return the prepared query that should be executed in order to list all variant results.
+     */
+    protected function getExecutableFindQuery(int|string $key): Builder
+    {
+        // TODO.
+        // $column = $this->getKeyQueryColumn();
+        // $key = $this->getKeyQueryValue($key);
+
+        // $item = (is_string($this->key))
+        //     ? $query->where($this->key, $key)->first()
+        //     : $query->find($key);
+        return $this->query->where('id',$key);
     }
 
     /**
@@ -54,10 +69,18 @@ class Query implements VariantsRepositoryInterface
     protected function toVariants(array $results): array
     {
         return array_values(array_map(
-            fn($index, $item) => new Variant($item, $this->getVariantKey($item, $index)),
+            fn($index, $item) => $this->toVariant($item, $index),
             array_keys($results),
             array_values($results)
         ));
+    }
+
+    /**
+     * Return a Variant instances representing the provided raw data.
+     */
+    protected function toVariant(mixed $item, int|string $index): Variant
+    {
+        return new Variant($item, $this->getVariantKey($item, $index));
     }
 
     /**
@@ -86,7 +109,38 @@ class Query implements VariantsRepositoryInterface
         }
 
         return $this->cache = $this->toVariants(
-            $this->getExecutableQuery()->get()->all()
+            $this->getExecutableIndexQuery()->get()->all()
         );
+    }
+
+    /**
+     * Return a specific variant matching provided key.
+     */
+    public function find(int|string $key): ?Variant
+    {
+        if(! is_null($this->cache)) {
+            return $this->findCached($key);
+        }
+
+        $item = $this->getExecutableFindQuery($key)->first();
+
+        if(! $item) {
+            return null;
+        }
+
+        return $this->toVariant($item, $key);
+    }
+
+    /**
+     * Return a specific cached variant by its key.
+     */
+    protected function findCached(int|string $key): ?Variant
+    {
+        foreach ($this->cache ?? [] as $variant) {
+            if($variant->getKey() != $key) continue;
+            return $variant;
+        }
+
+        return null;
     }
 }

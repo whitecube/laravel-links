@@ -57,6 +57,7 @@ class Manager
     public function resolve(array $value, bool $silent = false): ?Link
     {
         if(! isset($value['resolver'])) {
+            if($silent) return null;
             throw InvalidSerializedValue::missingResolver();
         }
 

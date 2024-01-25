@@ -40,4 +40,17 @@ class Collection implements VariantsRepositoryInterface
     {
         return $this->items;
     }
+
+    /**
+     * Return a specific variant matching provided key.
+     */
+    public function find(int|string $key): ?Variant
+    {
+        foreach ($this->items as $variant) {
+            if($variant->getKey() != $key) continue;
+            return $variant;
+        }
+
+        return null;
+    }
 }
