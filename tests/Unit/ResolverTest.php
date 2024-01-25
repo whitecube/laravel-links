@@ -38,7 +38,7 @@ expect()->extend('toBeWorkingArchiveItemsResolver', function (Collection $items)
 
     $options = $this->value->toOption();
     expect($options)->toBeInstanceOf(\Whitecube\Links\OptionsCollection::class);
-    expect($options->total())->toBe(count($items));
+    expect($options->total())->toBe($items->count());
 
     $keys = $items->pluck('id')->all();
     $titles = $items->pluck('title')->all();

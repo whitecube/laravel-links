@@ -30,7 +30,7 @@ class ModelQuery extends Query
     /**
      * Return the prepared query that should be executed.
      */
-    protected function getExecutableQuery(): Builder
+    protected function getExecutableIndexQuery(): Builder
     {
         if($this->queryCallback) {
             call_user_func($this->queryCallback, $this->query);
