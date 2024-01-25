@@ -16,7 +16,7 @@ Building a content page and want to add the possibility to insert links to your 
     ```
 2. Store a short, immutable reference to this URL and let your application resolve its current, working URL at runtime:
     ```
-    Hi! What can I get you? We have some great [apples](#link[product@216]).
+    Hi! What can I get you? We have some great [apples](#link[products.item@216]).
     Love this package? Support us and consider [sponsoring Whitecube](#link[sponsor])!
     ```
 
@@ -37,7 +37,7 @@ This package will auto-register its service provider.
 
 ## Usage
 
-First, you'll need to register the application's link resolvers. Link resolvers are objects used to transform immutable link references (such as `product@216`) into fully qualified URLs. Resolvers can handle any of your application's routes or even complex external URLs. This package ships with a few common resolvers but feel free to create your own!
+First, you'll need to register the application's link resolvers. Link resolvers are objects used to transform immutable link references (such as `products.item@216`) into fully qualified URLs. Resolvers can handle any of your application's routes or even complex external URLs. This package ships with a few common resolvers but feel free to create your own!
 
 A good place to start is with a Service Provider. You can use an existing one (why not the application's `RouteServiceProvider`?) or create a dedicated Provider (e.g. `LinkServiceProvider`). Then, inside the provider's `boot` method, provide a resolver definition for each link you'll need to reference:
 
