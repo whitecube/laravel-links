@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\URL;
 |
 */
 
-// uses(Tests\TestCase::class)->in('Feature');
+require_once(__DIR__ . '/TestCase.php');
+
+uses(Tests\TestCase::class)->in('Feature');
 
 /*
 |--------------------------------------------------------------------------

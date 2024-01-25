@@ -2,9 +2,10 @@
 
 namespace Tests;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Orchestra\Testbench\Concerns\WithWorkbench;
 
-abstract class TestCase extends BaseTestCase
+class TestCase extends OrchestraTestCase
 {
-    //
+    use WithWorkbench;
 }
