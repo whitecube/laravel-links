@@ -5,7 +5,7 @@
 > 🎯 Display intuitive and exhaustive form fields for links selection ;  
 > 💾 Store references to simple or complex URLs where and how you want.
 
-Laravel's routing system is great. With this package, it will become even greater! Using a simple link reference syntax, you'll be able to store and parse URLs on-the-fly and take full advantage of Laravel's routing in rich content and other stored data structures.
+Laravel's routing system is great. With this package, it will become even greater! Using a simple link reference syntax, you'll be able to store and parse URLs on-the-fly and take full advantage of Laravel's routing in rich content such as CMS editors, admin interfaces and other managed configurations.
 
 Building a content page and want to add the possibility to insert links to your application's resources (or even external!) from your admin panel? You basically have two options:
 
