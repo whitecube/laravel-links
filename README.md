@@ -26,6 +26,14 @@ You'll get it: the second one is probably the best. However, it can swiftly beco
 
 1. [Installation](#installation)
 2. [Usage](#usage)
+3. [Editing & storing link references](#editing-storing-link-references)
+4. [Resolving link URLs](#resolving-link-urls)
+    - [Using the `Link` instantiation methods](#using-the-link-instantiation-methods)
+    - [Using the `Links` facade](#using-the-links-facade)
+    - [Using the `Str` facade or `str()` helper](#using-the-str-facade-or-str-helper)
+    - [Using Blade directives](#using-blade-directives)
+    - [Using model attribute casting](#using-model-attribute-casting)
+5. [Reporting link resolving issues](#reporting-link-resolving-issues)
 
 ## Installation
 
@@ -62,7 +70,55 @@ public function boot()
 }
 ```
 
-More details soon.
+You can now start [inserting link references](#editing-storing-link-references) and [resolving](#resolving-link-urls) them for display.
+
+## Editing & storing link references
+
+WIP.
+
+## Resolving link URLs
+
+As stated above, links can be stored in many ways, depending on your use case. Here are a few common methods that should get you started.
+
+### Using the `Link` instantiation methods
+
+WIP
+
+### Using the `Links` facade
+
+WIP
+
+### Using the `Str` facade or `str()` helper
+
+WIP
+
+### Using Blade directives
+
+WIP
+
+### Using model attribute casting
+
+Beware that model attribute casting can have undesired side-effects on dedicated link editor components since they'll probably rely on the attribute's raw value (meaning "with unresolved link references") to work.
+
+#### Casting textual content with inline link references (inline tags)
+
+The `ResolvedInlineLinkTagsString` cast is useful when a model has attributes containing editorial content with inline link references (also called "inline tags") that all need to be resolved at once.
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Whitecube\Links\Casts\ResolvedInlineLinkTagsString;
+
+class Post extends Model
+{
+    protected $casts = [
+        'content' => ResolvedInlineLinkTagsString::class,
+    ];
+}
+```
+
+## Reporting link resolving issues
+
+WIP.
 
 ---
 
