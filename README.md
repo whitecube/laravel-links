@@ -123,6 +123,15 @@ class Post extends Model
 }
 ```
 
+For instance, a `content` attribute containing the following string:
+```
+Hello, welcome to my website! Take a look at my [woodworking skills](#link[services.item@woodworking]) or [learn more about me](#link[about]).
+```
+Would be cast into:
+```
+Hello, welcome to my website! Take a look at my [woodworking skills](https://my-shop.com/services/professional-woodworking/) or [learn more about me](https://my-shop.com/about-me/).
+```
+
 ## Reporting link resolving issues
 
 WIP.
