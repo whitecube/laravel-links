@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Whitecube\Links\Tests;
 
 use Orchestra\Testbench\TestCase as BaseOrchestraTestCase;
 use Orchestra\Testbench\Concerns\WithWorkbench;

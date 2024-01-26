@@ -18,11 +18,8 @@ use Illuminate\Support\Facades\URL;
 |
 */
 
-require_once(__DIR__ . '/DefaultTestCase.php');
-require_once(__DIR__ . '/OrchestraTestCase.php');
-
-uses(Tests\OrchestraTestCase::class)->in('Feature');
-uses(Tests\DefaultTestCase::class)->in('Unit');
+uses(\Whitecube\Links\Tests\OrchestraTestCase::class)->in('Feature');
+uses(\Whitecube\Links\Tests\DefaultTestCase::class)->in('Unit');
 
 /*
 |--------------------------------------------------------------------------

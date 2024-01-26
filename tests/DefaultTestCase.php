@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Whitecube\Links\Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
