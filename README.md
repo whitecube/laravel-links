@@ -26,14 +26,15 @@ You'll get it: the second one is probably the best. However, it can swiftly beco
 
 1. [Installation](#installation)
 2. [Usage](#usage)
-3. [Editing & storing link references](#editing--storing-link-references)
-4. [Resolving link URLs](#resolving-link-urls)
+3. [Registering link resolvers](#registering-link-resolvers)
+4. [Editing & storing link references](#editing--storing-link-references)
+5. [Resolving link URLs](#resolving-link-urls)
     - [Using the `Link` instantiation methods](#using-the-link-instantiation-methods)
     - [Using the `Links` facade](#using-the-links-facade)
     - [Using the `Str` facade or `str()` helper](#using-the-str-facade-or-str-helper)
     - [Using Blade directives](#using-blade-directives)
     - [Using model attribute casting](#using-model-attribute-casting)
-5. [Reporting link resolving issues](#reporting-link-resolving-issues)
+6. [Reporting link resolving issues](#reporting-link-resolving-issues)
 
 ## Installation
 
@@ -70,7 +71,13 @@ public function boot()
 }
 ```
 
+Of course, your application could have more complex routing configurations that would probably be more difficult to map into link resolvers. This package offers a lot of [advanced resolver setup features](#registering-link-resolvers) that could cover your needs, but you can also extend the shipped traits or write your own resolvers.
+
 You can now start [inserting link references](#editing--storing-link-references) and [resolving](#resolving-link-urls) them for display.
+
+## Registering link resolvers
+
+WIP.
 
 ## Editing & storing link references
 
