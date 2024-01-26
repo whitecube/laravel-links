@@ -2,6 +2,7 @@
 
 namespace Workbench\App\Models;
 
+use Whitecube\Links\Casts\ResolvedInlineLinkTagsString;
 use Workbench\Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,6 +14,10 @@ class Post extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'content' => ResolvedInlineLinkTagsString::class,
+    ];
 
     protected static function newFactory(): Factory
     {
