@@ -4,13 +4,15 @@ namespace Whitecube\Links\Exceptions;
 
 use InvalidArgumentException;
 
-class ResolverNotFound extends InvalidArgumentException
+class ResolverNotFound extends InvalidArgumentException implements ResolvingException
 {
+    use ReportsResolver;
+    
     /**
      * Create a new Exception for undefined resolver keys.
      */
-    public static function forKey(string $key): never
+    public static function forKey(string $key): static
     {
-        throw new self(sprintf('Link resolver for key "%s" is undefined.', $key));
+        return new self(sprintf('Link resolver for key "%s" is undefined.', $key));
     }
 }

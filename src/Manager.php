@@ -7,6 +7,7 @@ use Whitecube\Links\Resolvers\Route;
 use Whitecube\Links\Resolvers\Archive;
 use Whitecube\Links\Exceptions\ResolverNotFound;
 use Whitecube\Links\Exceptions\InvalidSerializedValue;
+use Whitecube\Links\Converters\InlineTags as InlineTagsConverter;
 
 class Manager
 {
@@ -73,13 +74,22 @@ class Manager
     }
 
     /**
+     * Return the provided string with all its Link references transformed into
+     * concrete resolved URLs.
+     */
+    public function resolveString(string $value): string
+    {
+        return (new InlineTagsConverter($value))->resolve();
+    }
+
+    /**
      * Retrieve a registered resolver from the links resolvers repository
      * and throw an exception if not defined.
      */
     public function for(string $key): ResolverInterface
     {
         if(! ($resolver = $this->tryFor($key))) {
-            return ResolverNotFound::forKey($key);
+            throw ResolverNotFound::forKey($key);
         }
 
         return $resolver;

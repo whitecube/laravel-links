@@ -5,8 +5,10 @@ namespace Whitecube\Links\Exceptions;
 use InvalidArgumentException;
 use Whitecube\Links\Resolvers\Archive;
 
-class InvalidSerializedValue extends InvalidArgumentException
+class InvalidSerializedValue extends InvalidArgumentException implements ResolvingException
 {
+    use ReportsResolver;
+    
     /**
      * Create a new Exception for an invalid serialized inline tag value.
      */

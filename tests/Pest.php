@@ -70,10 +70,10 @@ function setupAppBindings(?Manager $service = null): Manager
     return $singleton;
 }
 
-function setupRoute(string $name, array $arguments = []): void
+function setupRoute(string $name, array $arguments = [], int $times = 1): void
 {   
     URL::shouldReceive('route')
-        ->once()
+        ->times($times)
         ->with($name, $arguments)
         ->andReturn('https://foo.bar/testing-route');
 }

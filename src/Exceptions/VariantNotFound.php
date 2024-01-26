@@ -4,8 +4,10 @@ namespace Whitecube\Links\Exceptions;
 
 use InvalidArgumentException;
 
-class VariantNotFound extends InvalidArgumentException
+class VariantNotFound extends InvalidArgumentException implements ResolvingException
 {
+    use ReportsResolver;
+
     /**
      * Create a new Exception for undefined variant keys.
      */
