@@ -26,7 +26,7 @@ You'll get it: the second one is probably the best. However, it can swiftly beco
 
 1. [Installation](#installation)
 2. [Usage](#usage)
-3. [Editing & storing link references](#editing-storing-link-references)
+3. [Editing & storing link references](#editing--storing-link-references)
 4. [Resolving link URLs](#resolving-link-urls)
     - [Using the `Link` instantiation methods](#using-the-link-instantiation-methods)
     - [Using the `Links` facade](#using-the-links-facade)
@@ -70,7 +70,7 @@ public function boot()
 }
 ```
 
-You can now start [inserting link references](#editing-storing-link-references) and [resolving](#resolving-link-urls) them for display.
+You can now start [inserting link references](#editing--storing-link-references) and [resolving](#resolving-link-urls) them for display.
 
 ## Editing & storing link references
 
