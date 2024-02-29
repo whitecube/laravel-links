@@ -14,6 +14,11 @@ it('can resolve URL from shortkey after model changes', function() {
     expect(Link::fromKey('posts.item@16')->url)->toBe('http://localhost/blog/tech/whitecubes-open-source-packages-in-review');
 });
 
+it('can resolve multiple Query Variants during the same request lifecycle', function() {
+    expect(Link::fromKey('posts.item@16')->url)->toBe('http://localhost/blog/tech/whitecubes-open-source-packages');
+    expect(Link::fromKey('posts.item@24')->url)->toBe('http://localhost/blog/tech/whitecubes-laravel-link-package-review');
+});
+
 it('can parse textual content with resolved URLs using model attribute casting', function() {
     $post = Post::find(24);
 
