@@ -45,7 +45,7 @@ class Query implements VariantsRepositoryInterface
      */
     protected function getExecutableIndexQuery(): Builder
     {
-        return $this->query;
+        return clone $this->query;
     }
 
     /**
@@ -57,10 +57,12 @@ class Query implements VariantsRepositoryInterface
         // $column = $this->getKeyQueryColumn();
         // $key = $this->getKeyQueryValue($key);
 
+        $query = clone $this->query;
+
         // $item = (is_string($this->key))
         //     ? $query->where($this->key, $key)->first()
         //     : $query->find($key);
-        return $this->query->where('id',$key);
+        return $query->where('id',$key);
     }
 
     /**
